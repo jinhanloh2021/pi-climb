@@ -1,4 +1,4 @@
-module github.com/jinhanloh2021/book-anything
+module github.com/jinhanloh2021/beta-blocker
 
 go 1.24.3
 
