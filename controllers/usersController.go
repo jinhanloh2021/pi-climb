@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/jinhanloh2021/book-anything/initialisers"
-	"github.com/jinhanloh2021/book-anything/models"
+	"github.com/jinhanloh2021/beta-blocker/initialisers"
+	"github.com/jinhanloh2021/beta-blocker/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

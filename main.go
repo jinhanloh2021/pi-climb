@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinhanloh2021/book-anything/controllers"
-	"github.com/jinhanloh2021/book-anything/initialisers"
+	"github.com/jinhanloh2021/beta-blocker/controllers"
+	"github.com/jinhanloh2021/beta-blocker/initialisers"
 )
 
 func init() {
