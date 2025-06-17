@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"sync" // For singleton pattern if needed
@@ -28,10 +29,13 @@ func LoadConfig() *Config {
 			// log.Println("No .env file found, assuming environment variables are set.")
 			log.Fatal("Error loading .env file") // Only fatal if .env is strictly required
 		}
+		appEnv := os.Getenv("APP_ENV")
+		dbURL := os.Getenv(fmt.Sprintf("%s_DATABASE_URL", appEnv))
+		jwtSecret := os.Getenv(fmt.Sprintf("%s_JWT_SECRET", appEnv))
 
 		appConfig = &Config{
-			DatabaseURL:       os.Getenv("DATABASE_URL"),
-			SupabaseJWTSecret: os.Getenv("SUPABASE_JWT_SECRET"), // Get this from Supabase project settings
+			DatabaseURL:       dbURL,
+			SupabaseJWTSecret: jwtSecret,
 		}
 
 		if appConfig.DatabaseURL == "" {
