@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinhanloh2021/beta-blocker/internal/auth" // Import your new auth package
@@ -27,6 +28,8 @@ func main() {
 	userHandler := handler.NewUserHandler(userService)
 
 	// Routes
+	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{}) })
+
 	// No /signup or /login for direct email/password via your backend anymore
 	// Frontend will handle these via Supabase JS SDK directly.
 
