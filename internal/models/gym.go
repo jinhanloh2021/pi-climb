@@ -6,7 +6,8 @@ import (
 
 type Gym struct {
 	gorm.Model
-	Name string `gorm:"not null;index"`
+	Name          string   `gorm:"not null;index"`
+	GradingSystem []string `gorm:"type:text[];not null"`
 
 	// Derived from Google Place Details // https://developers.google.com/maps/documentation/places/web-service/place-details
 	GooglePlaceID *string `gorm:"unique"`

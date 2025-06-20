@@ -1,14 +1,16 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Like struct {
 	UserID uint  `gorm:"primaryKey;not null"`
-	PostID uint  `gorm:"primaryKey;not null;index"`
 	User   *User `gorm:"foreignKey:UserID;references:ID"`
+
+	PostID uint  `gorm:"primaryKey;not null;index"`
 	Post   *Post `gorm:"foreignKey:PostID;references:ID"`
 
 	CreatedAt *time.Time

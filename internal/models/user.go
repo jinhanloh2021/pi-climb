@@ -18,8 +18,8 @@ type User struct {
 	DateOfBirth *time.Time
 
 	Followers      []Follow `gorm:"foreignKey:ToUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	Following      []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 	FollowerCount  uint     `gorm:"not null;default:0"`
+	Following      []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 	FollowingCount uint     `gorm:"not null;default:0"`
 
 	Avatar *Media `gorm:"polymorphic:Owner;polymorphicValue:users;constraint:OnDelete:CASCADE"`
