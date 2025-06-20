@@ -17,12 +17,16 @@ type User struct {
 	PhoneNumber *string   `gorm:"unique"`
 	DateOfBirth *time.Time
 
-	Followers []Follow `gorm:"foreignKey:ToUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	Following []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	Followers      []Follow `gorm:"foreignKey:ToUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	Following      []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	FollowerCount  uint     `gorm:"not null;default:0"`
+	FollowingCount uint     `gorm:"not null;default:0"`
 
 	Avatar *Media `gorm:"polymorphic:Owner;polymorphicValue:users;constraint:OnDelete:CASCADE"`
 
 	Posts []Post `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 
 	Likes []Like `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+
+	Comments []Comment `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 }

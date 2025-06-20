@@ -12,6 +12,12 @@ type Post struct {
 
 	Media []Media `gorm:"polymorphic:Owner;polymorphicValue:posts;constraint:OnDelete:CASCADE;"`
 
-	Likes []Like `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	// reference gym
+	Likes     []Like `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+	LikeCount uint   `gorm:"not null;default:0"` // update in app level in hook, AfterUpdate
+
+	CommentCount uint      `gorm:"not null;default:0"`
+	Comments     []Comment `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+
+	GymID *uint // optional Gym relation
+	Gym   *Gym  `gorm:"foreignKey:GymID;references:ID"`
 }
