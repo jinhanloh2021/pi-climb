@@ -55,7 +55,15 @@ export function SignUpForm({
       setIsLoading(false);
     }
   };
-
+  const handleGoogleSignUp = async () => {
+    const supabase = createClient();
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `http://localhost:3000/auth/callback`,
+      },
+    });
+  };
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -113,6 +121,9 @@ export function SignUpForm({
               </Link>
             </div>
           </form>
+          <Button className="w-full" onClick={handleGoogleSignUp}>
+            Sign up with Google
+          </Button>
         </CardContent>
       </Card>
     </div>
