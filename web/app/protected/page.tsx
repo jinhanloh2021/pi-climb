@@ -21,7 +21,8 @@ export default async function ProtectedPage() {
     redirect("/auth/login");
   }
 
-  const response = await fetch("http://localhost:8080/authenticated", {
+  // todo: api folders, url folder, authenticate requests
+  const response = await fetch("http://localhost:8080/myinfo", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -42,12 +43,17 @@ export default async function ProtectedPage() {
         </div>
       </div>
       <div className="flex flex-col gap-2 items-start">
-        <h2 className="font-bold text-2xl mb-4">Your user details</h2>
+        <h2 className="font-bold text-2xl mb-4">User details Supa server</h2>
         <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
           {JSON.stringify(data.user, null, 2)}
         </pre>
       </div>
-      <div>{JSON.stringify(responseData)}</div>
+      <div className="flex flex-col gap-2 items-start">
+        <h2 className="font-bold text-2xl mb-4">User details Go server</h2>
+        <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
+          {JSON.stringify(responseData, null, 2)}
+        </pre>
+      </div>
       <div>
         <h2 className="font-bold text-2xl mb-4">Next steps</h2>
         <FetchDataSteps />
