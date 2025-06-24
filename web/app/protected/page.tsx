@@ -11,6 +11,26 @@ export default async function ProtectedPage() {
   if (error || !data?.user) {
     redirect("/auth/login");
   }
+  const { data: sessionData, error: sessionError } =
+    await supabase.auth.getSession();
+  if (sessionError) {
+    redirect("/auth/login");
+  }
+  const jwtToken = sessionData?.session?.access_token;
+  if (!jwtToken) {
+    redirect("/auth/login");
+  }
+
+  const response = await fetch("http://localhost:8080/authenticated", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
+    },
+    cache: "no-store", // Important for development to avoid caching stale data
+  });
+  const responseData = await response.json();
+  console.dir(responseData);
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -27,6 +47,7 @@ export default async function ProtectedPage() {
           {JSON.stringify(data.user, null, 2)}
         </pre>
       </div>
+      <div>{JSON.stringify(responseData)}</div>
       <div>
         <h2 className="font-bold text-2xl mb-4">Next steps</h2>
         <FetchDataSteps />

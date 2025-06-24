@@ -21,34 +21,21 @@ func NewUserHandler(s service.UserService) *UserHandler {
 // GetAuthenticatedUser handles GET /authenticated route
 // It requires AuthMiddleware and returns the user's details.
 func (h *UserHandler) GetAuthenticatedUser(c *gin.Context) {
-	// userID and userEmail are set by the AuthMiddleware
-	userID, ok := auth.GetUserIDFromContext(c)
+	claims, ok := auth.GetJwtClaimsFromContext(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User ID not found in context"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "JWT claims not found in context"})
 		return
 	}
 
-	userEmail, ok := auth.GetUserEmailFromContext(c)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "User email not found in context"})
-		return
-	}
+	// // Check your application's `users` table for SupabaseID.
+	// // If it doesn't exist, then create the user's profile.
+	// appUser, err := h.userService.GetOrCreateUserBySupabaseID(c.Request.Context(), userID, userEmail)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user profile", "details": err.Error()})
+	// 	return
+	// }
 
-	// Check your application's `users` table for SupabaseID.
-	// If it doesn't exist, then create the user's profile.
-	appUser, err := h.userService.GetOrCreateUserBySupabaseID(c.Request.Context(), userID, userEmail)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get or create user profile", "details": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message":     "Authenticated successfully!",
-		"supabase_id": appUser.SupabaseID,
-		"email":       appUser.Email,
-		"username":    appUser.Username, // Will be empty if newly created
-		// Add other user profile details
-	})
+	c.JSON(http.StatusOK, gin.H{"claims": claims})
 }
 
 // New Post handler (example, not fully implemented)

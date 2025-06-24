@@ -37,5 +37,5 @@ func main() {
 	r.GET("/authenticated", auth.AuthMiddleware(), userHandler.GetAuthenticatedUser)
 	r.POST("/posts", auth.AuthMiddleware(), handler.CreatePost) // Example for another handler
 
-	log.Fatal(r.Run()) // Listen and serve on 0.0.0.0:8080 by default
+	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
 }

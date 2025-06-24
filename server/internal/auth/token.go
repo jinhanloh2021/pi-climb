@@ -24,12 +24,12 @@ type CustomClaims struct {
 }
 
 // Validates the JWT issued by Supabase
-func ValidateSupabaseJWT(tokenString string) (uuid.UUID, string, error) {
+func ValidateSupabaseJWT(tokenString string) (uuid.UUID, *CustomClaims, error) {
 	// Supabase JWTs are signed with HMAC SHA256 using the JWT secret from your project settings.
 	jwtSecret := config.LoadConfig().SupabaseJWTSecret
 
 	if jwtSecret == "" {
-		return uuid.Nil, "", errors.New("SUPABASE_JWT_SECRET not set")
+		return uuid.Nil, nil, errors.New("SUPABASE_JWT_SECRET not set")
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (any, error) {
@@ -39,25 +39,24 @@ func ValidateSupabaseJWT(tokenString string) (uuid.UUID, string, error) {
 		}
 		return []byte(jwtSecret), nil
 	})
-
 	if err != nil {
-		return uuid.Nil, "", fmt.Errorf("invalid token: %w", err)
+		return uuid.Nil, nil, fmt.Errorf("invalid token: %w", err)
 	}
 
 	claims, ok := token.Claims.(*CustomClaims)
 	if !ok || !token.Valid {
-		return uuid.Nil, "", errors.New("invalid token claims")
+		return uuid.Nil, nil, errors.New("invalid token claims")
 	}
 
 	// Basic claims validation, Supabase handles most of this
 	if claims.ExpiresAt != nil && claims.ExpiresAt.Before(time.Now()) {
-		return uuid.Nil, "", errors.New("token expired")
+		return uuid.Nil, nil, errors.New("token expired")
 	}
 
 	userID, err := uuid.Parse(claims.Sub)
 	if err != nil {
-		return uuid.Nil, "", fmt.Errorf("invalid user ID in token: %w", err)
+		return uuid.Nil, nil, fmt.Errorf("invalid user ID in token: %w", err)
 	}
 
-	return userID, claims.Email, nil
+	return userID, claims, nil
 }

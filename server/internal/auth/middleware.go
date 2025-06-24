@@ -32,7 +32,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID, userEmail, err := ValidateSupabaseJWT(tokenString)
+		userID, claims, err := ValidateSupabaseJWT(tokenString)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token", "details": err.Error()})
 			return
@@ -40,10 +40,18 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		// Set user ID and email for subsequent handlers
 		c.Set("userID", userID)
-		c.Set("userEmail", userEmail)
+		c.Set("claims", claims)
 
 		c.Next() // Call Next handler
 	}
+}
+
+func GetJwtClaimsFromContext(c *gin.Context) (*CustomClaims, bool) {
+	claims, ok := c.Get("claims")
+	if !ok {
+		return nil, false
+	}
+	return claims.(*CustomClaims), true
 }
 
 // Retrieves the user ID from the Gin context
@@ -57,9 +65,11 @@ func GetUserIDFromContext(c *gin.Context) (uuid.UUID, bool) {
 
 // Retrieves the user email from the Gin context
 func GetUserEmailFromContext(c *gin.Context) (string, bool) {
-	userEmail, ok := c.Get("userEmail")
+	claims, ok := c.Get("claims")
+	userEmail := claims.(*CustomClaims).Email
+
 	if !ok {
 		return "", false
 	}
-	return userEmail.(string), true
+	return userEmail, true
 }
