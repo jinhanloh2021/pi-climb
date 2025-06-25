@@ -1,6 +1,9 @@
 -- Create or replace the function that will be triggered.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
 DECLARE
     generated_username VARCHAR(64);
 BEGIN
@@ -28,7 +31,7 @@ BEGIN
     );
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 -- SECURITY DEFINER runs function with permissions of function owener, not caller
 
 -- Create the trigger to fire the function automatically on new user sign-ups.
