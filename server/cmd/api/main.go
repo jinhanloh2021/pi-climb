@@ -30,10 +30,7 @@ func main() {
 	// Routes
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{}) })
 
-	// No /signup or /login for direct email/password via your backend anymore
-	// Frontend will handle these via Supabase JS SDK directly.
-
-	// Protected route example
+	// Protected route
 	r.GET("/myinfo", auth.AuthMiddleware(), userHandler.GetMyUser)
 
 	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
