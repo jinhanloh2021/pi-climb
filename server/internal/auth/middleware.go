@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // Validates the JWT from the Authorization header or cookie and sets the user ID and email in the Gin context
@@ -51,4 +52,16 @@ func GetJwtClaimsFromContext(c *gin.Context) (*CustomClaims, bool) {
 		return nil, false
 	}
 	return claims.(*CustomClaims), true
+}
+
+func GetUserUUIDFromContext(c *gin.Context) (uuid.UUID, bool) {
+	claims, ok := GetJwtClaimsFromContext(c)
+	if !ok {
+		return uuid.Nil, false
+	}
+	id, err := uuid.Parse(claims.Sub)
+	if err != nil {
+		return uuid.Nil, false
+	}
+	return id, true
 }

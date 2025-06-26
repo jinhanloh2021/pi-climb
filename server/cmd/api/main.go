@@ -33,5 +33,7 @@ func main() {
 	// Protected route
 	r.GET("/myinfo", auth.AuthMiddleware(), userHandler.GetMyUser)
 
+	r.PATCH("/dob", auth.AuthMiddleware(), userHandler.TrySetDifferentUserDOB)
+
 	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
 }

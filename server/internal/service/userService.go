@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
@@ -10,6 +11,7 @@ import (
 
 type UserService interface {
 	GetUserByUUID(ctx context.Context, supabaseID uuid.UUID) (*models.User, error)
+	SetUserDOB(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
 }
 
 type userService struct {
@@ -18,6 +20,14 @@ type userService struct {
 
 func (s *userService) GetUserByUUID(ctx context.Context, supabaseID uuid.UUID) (*models.User, error) {
 	user, err := s.userRepo.FindBySupabaseID(ctx, supabaseID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (s *userService) SetUserDOB(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
+	user, err := s.userRepo.SetDOBBySupabaseID(ctx, targetID, callerID, DOB)
 	if err != nil {
 		return nil, err
 	}
