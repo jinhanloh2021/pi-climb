@@ -13,12 +13,12 @@ CREATE POLICY "Users can update their own profile"
 ON public.users
 FOR UPDATE
 TO backend_service_role
-USING ((current_setting('app.current_user_id'::text, true))::uuid = supabase_id)
-WITH CHECK ((current_setting('app.current_user_id'::text, true))::uuid = supabase_id);
+USING (((SELECT current_setting('app.current_user_id'::text, true)))::uuid = supabase_id)
+WITH CHECK (((SELECT current_setting('app.current_user_id'::text, true)))::uuid = supabase_id);
 
 -- Policy for DELETE: A user can DELETE their OWN profile.
 CREATE POLICY "Users can delete their own profile"
 ON public.users
 FOR DELETE
 TO backend_service_role
-USING ((current_setting('app.current_user_id'::text, true))::uuid = supabase_id)
+USING (((SELECT current_setting('app.current_user_id'::text, true)))::uuid = supabase_id)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
 	"gorm.io/gorm"
@@ -14,6 +15,7 @@ import (
 type UserRepository interface {
 	FindBySupabaseID(ctx context.Context, supabaseID uuid.UUID) (*models.User, error)
 	SetDOBBySupabaseID(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
+	FindByUsername(ctx *gin.Context, username string) (*models.User, error)
 }
 
 type userRepository struct {
@@ -37,10 +39,39 @@ func (r *userRepository) FindBySupabaseID(ctx context.Context, supabaseID uuid.U
 	return &user, nil
 }
 
+// TODO: Mask PII in response, except if owner
+func (r *userRepository) FindByUsername(c *gin.Context, username string) (*models.User, error) {
+	var user models.User
+	userUUIDAny, ok := c.Get("userUUID")
+	if !ok {
+		return nil, errors.New("User's UUID cannot be extracted from context")
+	}
+	userUUID, ok := userUUIDAny.(uuid.UUID)
+	if !ok {
+		return nil, errors.New("userUUID in context not of type uuid.UUID")
+	}
+	err := r.db.WithContext(c).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", userUUID.String())).Error; err != nil {
+			return fmt.Errorf("failed to set RLS context for transaction: %w", err)
+		}
+		findResult := tx.Where("username = ?", username).First(&user)
+		if findResult.Error != nil {
+			if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
+				return gorm.ErrRecordNotFound
+			}
+			return fmt.Errorf("failed to find user: %w", findResult.Error)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *userRepository) SetDOBBySupabaseID(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
 	var user models.User
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-
 		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", callerID.String())).Error; err != nil {
 			return errors.New("failed to set RLS context for transaction")
 		}
@@ -70,7 +101,6 @@ func (r *userRepository) SetDOBBySupabaseID(ctx context.Context, targetID uuid.U
 
 		return nil // No error, return nil error
 	})
-
 	if err != nil {
 		return nil, err
 	}

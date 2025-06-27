@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -8,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/auth"
 	"github.com/jinhanloh2021/beta-blocker/internal/service"
+	"gorm.io/gorm"
 )
 
 type UserHandler struct {
@@ -46,7 +49,21 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"JWTclaims": claims, "MyInfo": user})
 }
 
+func (h *UserHandler) GetUserByUsername(c *gin.Context) {
+	user, err := h.userService.GetUserByUsername(c, c.Param("username"))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("User %s not found", c.Param("username"))})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user by username"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
+	// TODO: Change to get directly from context
 	callerID, ok := auth.GetUserUUIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user ID"})
@@ -65,7 +82,7 @@ func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
 	user, err := h.userService.SetUserDOB(c, targetID, callerID, &DOB)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error setting DOB. " + err.Error()})
+		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
