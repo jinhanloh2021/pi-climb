@@ -27,16 +27,7 @@ type UpdateDOBRequest struct {
 }
 
 func (h *UserHandler) GetMyUser(c *gin.Context) {
-	claims, ok := auth.GetJwtClaimsFromContext(c) // get logged in user from auth middleware
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "JWT claims not found in context"})
-		return
-	}
-	supabaseID, err := uuid.Parse(claims.Sub)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Cannot parse subject into UUID"})
-		return
-	}
+	supabaseID, _ := auth.GetUserUUID(c)
 	user, err := h.userService.GetUserByUUID(c, supabaseID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User"})
@@ -46,11 +37,12 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"JWTclaims": claims, "MyInfo": user})
+	c.JSON(http.StatusOK, gin.H{"User": user})
 }
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
-	user, err := h.userService.GetUserByUsername(c, c.Param("username"))
+	userUUID, _ := auth.GetUserUUID(c)
+	user, err := h.userService.GetUserByUsername(c, c.Param("username"), userUUID) // url param
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("User %s not found", c.Param("username"))})
@@ -63,13 +55,7 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 }
 
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
-	// TODO: Change to get directly from context
-	callerID, ok := auth.GetUserUUIDFromContext(c)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user ID"})
-		return
-	}
-
+	callerID, _ := auth.GetUserUUID(c)
 	var reqBody UpdateDOBRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})

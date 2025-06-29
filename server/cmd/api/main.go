@@ -27,15 +27,14 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	// Routes
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{}) })
 
-	// Protected route
-	r.GET("/myinfo", auth.AuthMiddleware(), userHandler.GetMyUser)
+	protected := r.Group("/")
+	protected.Use(auth.AuthMiddleware()).Use(auth.UserAuthContextMiddleware())
 
-	r.GET("/user/:username", auth.AuthMiddleware(), userHandler.GetUserByUsername)
-
-	r.PATCH("/dob", auth.AuthMiddleware(), userHandler.TrySetDifferentUserDOB)
+	protected.GET("/myinfo", userHandler.GetMyUser)
+	protected.GET("/user/:username", userHandler.GetUserByUsername)
+	protected.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
 	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
 }

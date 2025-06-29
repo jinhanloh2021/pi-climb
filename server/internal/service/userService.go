@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -11,34 +10,33 @@ import (
 )
 
 type UserService interface {
-	// TODO: Change to use *gin.Context
-	GetUserByUUID(ctx context.Context, supabaseID uuid.UUID) (*models.User, error)
-	GetUserByUsername(c *gin.Context, username string) (*models.User, error)
-	SetUserDOB(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
+	GetUserByUUID(c *gin.Context, supabaseID uuid.UUID) (*models.User, error)
+	GetUserByUsername(c *gin.Context, username string, userUUID uuid.UUID) (*models.User, error)
+	SetUserDOB(c *gin.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
 }
 
 type userService struct {
 	userRepo repository.UserRepository
 }
 
-func (s *userService) GetUserByUUID(ctx context.Context, supabaseID uuid.UUID) (*models.User, error) {
-	user, err := s.userRepo.FindBySupabaseID(ctx, supabaseID)
+func (s *userService) GetUserByUUID(c *gin.Context, supabaseID uuid.UUID) (*models.User, error) {
+	user, err := s.userRepo.FindBySupabaseID(c, supabaseID)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *userService) SetUserDOB(ctx context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
-	user, err := s.userRepo.SetDOBBySupabaseID(ctx, targetID, callerID, DOB)
+func (s *userService) SetUserDOB(c *gin.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
+	user, err := s.userRepo.SetDOBBySupabaseID(c, targetID, callerID, DOB)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func (s *userService) GetUserByUsername(c *gin.Context, username string) (*models.User, error) {
-	user, err := s.userRepo.FindByUsername(c, username)
+func (s *userService) GetUserByUsername(c *gin.Context, username string, userUUID uuid.UUID) (*models.User, error) {
+	user, err := s.userRepo.FindByUsername(c, username, userUUID)
 	if err != nil {
 		return nil, err
 	}
