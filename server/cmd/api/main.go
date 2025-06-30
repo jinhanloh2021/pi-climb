@@ -27,14 +27,14 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{}) })
+	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
 
-	protected := r.Group("/")
-	protected.Use(auth.AuthMiddleware()).Use(auth.UserAuthContextMiddleware())
+	apiV0 := r.Group("/api/v0")
+	apiV0.Use(auth.AuthMiddleware()).Use(auth.UserAuthContextMiddleware())
 
-	protected.GET("/myinfo", userHandler.GetMyUser)
-	protected.GET("/user/:username", userHandler.GetUserByUsername)
-	protected.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
+	apiV0.GET("/myinfo", userHandler.GetMyUser)
+	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
+	apiV0.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
 	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
 }

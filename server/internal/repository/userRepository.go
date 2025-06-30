@@ -25,6 +25,15 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepository{db: db}
 }
 
+func (r *userRepository) withRLSTransaction(c *gin.Context, userUUID uuid.UUID, fn func(tx *gorm.DB) error) error {
+	return r.db.WithContext(c).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", userUUID.String())).Error; err != nil {
+			return fmt.Errorf("failed to set RLS context for transaction: %w", err)
+		}
+		return fn(tx)
+	})
+}
+
 func (r *userRepository) FindBySupabaseID(c *gin.Context, supabaseID uuid.UUID) (*models.User, error) {
 	var user models.User
 	result := r.db.WithContext(c).Where("supabase_id = ?", supabaseID).First(&user)
@@ -41,10 +50,7 @@ func (r *userRepository) FindBySupabaseID(c *gin.Context, supabaseID uuid.UUID) 
 // TODO: Mask PII in response, except if owner
 func (r *userRepository) FindByUsername(c *gin.Context, username string, userUUID uuid.UUID) (*models.User, error) {
 	var user models.User
-	err := r.db.WithContext(c).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", userUUID.String())).Error; err != nil {
-			return fmt.Errorf("failed to set RLS context for transaction: %w", err)
-		}
+	err := r.withRLSTransaction(c, userUUID, func(tx *gorm.DB) error {
 		findResult := tx.Where("username = ?", username).First(&user)
 		if findResult.Error != nil {
 			if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
@@ -54,6 +60,7 @@ func (r *userRepository) FindByUsername(c *gin.Context, username string, userUUI
 		}
 		return nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
@@ -62,11 +69,7 @@ func (r *userRepository) FindByUsername(c *gin.Context, username string, userUUI
 
 func (r *userRepository) SetDOBBySupabaseID(c *gin.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
 	var user models.User
-	err := r.db.WithContext(c).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", callerID.String())).Error; err != nil {
-			return errors.New("failed to set RLS context for transaction")
-		}
-
+	err := r.withRLSTransaction(c, callerID, func(tx *gorm.DB) error {
 		// Find the user to update within this RLS-enabled transaction.
 		findResult := tx.Where("supabase_id = ?", targetID).First(&user)
 		if findResult.Error != nil {
@@ -87,7 +90,7 @@ func (r *userRepository) SetDOBBySupabaseID(c *gin.Context, targetID uuid.UUID, 
 		// 2. The RLS policy prevented the update
 		// 3. No actual change was made, DOB same
 		if updateResult.RowsAffected == 0 {
-			return errors.New("update failed, possibly due to RLS policy or no changes applied")
+			return fmt.Errorf("update failed for %s, possibly due to RLS policy or no changes applied", targetID)
 		}
 
 		return nil // No error, return nil error
