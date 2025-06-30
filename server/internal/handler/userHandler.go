@@ -4,11 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/auth"
+	"github.com/jinhanloh2021/beta-blocker/internal/dto"
 	"github.com/jinhanloh2021/beta-blocker/internal/service"
 	"gorm.io/gorm"
 )
@@ -21,14 +20,9 @@ func NewUserHandler(s service.UserService) *UserHandler {
 	return &UserHandler{userService: s}
 }
 
-type UpdateDOBRequest struct {
-	DateOfBirth  time.Time `json:"date_of_birth"`
-	TargetUserID uuid.UUID `json:"target_user_id"`
-}
-
 func (h *UserHandler) GetMyUser(c *gin.Context) {
 	supabaseID, _ := auth.GetUserUUID(c)
-	user, err := h.userService.GetUserByUUID(c, supabaseID)
+	user, err := h.userService.GetUserByUUID(c.Request.Context(), supabaseID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User"})
 		return
@@ -42,7 +36,7 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 	userUUID, _ := auth.GetUserUUID(c)
-	user, err := h.userService.GetUserByUsername(c, c.Param("username"), userUUID) // url param
+	user, err := h.userService.GetUserByUsername(c.Request.Context(), c.Param("username"), userUUID) // url param
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("User %s not found", c.Param("username"))})
@@ -56,7 +50,7 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
 	callerID, _ := auth.GetUserUUID(c)
-	var reqBody UpdateDOBRequest
+	var reqBody dto.UpdateDOBRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
 		return
@@ -65,7 +59,7 @@ func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
 	targetID := reqBody.TargetUserID
 	DOB := reqBody.DateOfBirth
 
-	user, err := h.userService.SetUserDOB(c, targetID, callerID, &DOB)
+	user, err := h.userService.SetUserDOB(c.Request.Context(), targetID, callerID, &DOB)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error setting DOB. " + err.Error()})
 		return

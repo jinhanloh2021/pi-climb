@@ -1,40 +1,32 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	FindBySupabaseID(c *gin.Context, supabaseID uuid.UUID) (*models.User, error)
-	SetDOBBySupabaseID(c *gin.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
-	FindByUsername(ctx *gin.Context, username string, userUUID uuid.UUID) (*models.User, error)
+	FindBySupabaseID(c context.Context, supabaseID uuid.UUID) (*models.User, error)
+	SetDOBBySupabaseID(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
+	FindByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error)
 }
 
 type userRepository struct {
-	db *gorm.DB
+	*BaseRepository
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
-	return &userRepository{db: db}
+	return &userRepository{BaseRepository: NewBaseRepository(db)}
 }
 
-func (r *userRepository) withRLSTransaction(c *gin.Context, userUUID uuid.UUID, fn func(tx *gorm.DB) error) error {
-	return r.db.WithContext(c).Transaction(func(tx *gorm.DB) error {
-		if err := tx.Exec(fmt.Sprintf("SET app.current_user_id = '%s'", userUUID.String())).Error; err != nil {
-			return fmt.Errorf("failed to set RLS context for transaction: %w", err)
-		}
-		return fn(tx)
-	})
-}
-
-func (r *userRepository) FindBySupabaseID(c *gin.Context, supabaseID uuid.UUID) (*models.User, error) {
+// TODO: Wrap with RLS transaction
+func (r *userRepository) FindBySupabaseID(c context.Context, supabaseID uuid.UUID) (*models.User, error) {
 	var user models.User
 	result := r.db.WithContext(c).Where("supabase_id = ?", supabaseID).First(&user)
 
@@ -48,7 +40,7 @@ func (r *userRepository) FindBySupabaseID(c *gin.Context, supabaseID uuid.UUID) 
 }
 
 // TODO: Mask PII in response, except if owner
-func (r *userRepository) FindByUsername(c *gin.Context, username string, userUUID uuid.UUID) (*models.User, error) {
+func (r *userRepository) FindByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error) {
 	var user models.User
 	err := r.withRLSTransaction(c, userUUID, func(tx *gorm.DB) error {
 		findResult := tx.Where("username = ?", username).First(&user)
@@ -67,7 +59,7 @@ func (r *userRepository) FindByUsername(c *gin.Context, username string, userUUI
 	return &user, nil
 }
 
-func (r *userRepository) SetDOBBySupabaseID(c *gin.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
+func (r *userRepository) SetDOBBySupabaseID(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
 	var user models.User
 	err := r.withRLSTransaction(c, callerID, func(tx *gorm.DB) error {
 		// Find the user to update within this RLS-enabled transaction.
