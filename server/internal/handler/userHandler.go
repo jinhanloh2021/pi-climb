@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinhanloh2021/beta-blocker/internal/auth"
 	"github.com/jinhanloh2021/beta-blocker/internal/dto"
+	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
 	"github.com/jinhanloh2021/beta-blocker/internal/service"
 	"gorm.io/gorm"
 )
@@ -21,7 +21,7 @@ func NewUserHandler(s service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetMyUser(c *gin.Context) {
-	supabaseID, _ := auth.GetUserUUID(c)
+	supabaseID, _ := middleware.GetUserUUID(c)
 	user, err := h.userService.GetUserByUUID(c.Request.Context(), supabaseID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User"})
@@ -35,7 +35,7 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 }
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
-	userUUID, _ := auth.GetUserUUID(c)
+	userUUID, _ := middleware.GetUserUUID(c)
 	user, err := h.userService.GetUserByUsername(c.Request.Context(), c.Param("username"), userUUID) // url param
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -49,7 +49,7 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 }
 
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
-	callerID, _ := auth.GetUserUUID(c)
+	callerID, _ := middleware.GetUserUUID(c)
 	var reqBody dto.UpdateDOBRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})

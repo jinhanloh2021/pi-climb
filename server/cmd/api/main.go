@@ -5,15 +5,14 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinhanloh2021/beta-blocker/internal/auth" // Import your new auth package
 	"github.com/jinhanloh2021/beta-blocker/internal/config"
-	"github.com/jinhanloh2021/beta-blocker/internal/database" // Renamed controllers to handlers
+	"github.com/jinhanloh2021/beta-blocker/internal/database"
 	"github.com/jinhanloh2021/beta-blocker/internal/handler"
-	"github.com/jinhanloh2021/beta-blocker/internal/repository" // Import repository
-	"github.com/jinhanloh2021/beta-blocker/internal/service"    // Import services
+	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
+	"github.com/jinhanloh2021/beta-blocker/internal/repository"
+	"github.com/jinhanloh2021/beta-blocker/internal/service"
 )
 
-// init runs before main
 func init() {
 	config.LoadConfig()
 	database.ConnectToDb()
@@ -30,11 +29,11 @@ func main() {
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
 
 	apiV0 := r.Group("/api/v0")
-	apiV0.Use(auth.AuthMiddleware()).Use(auth.UserAuthContextMiddleware())
+	apiV0.Use(middleware.AuthMiddleware()).Use(middleware.UserAuthContextMiddleware())
 
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
 	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
 	apiV0.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
-	log.Fatal(r.Run(":8080")) // Listen and serve on 0.0.0.0:8080 by default
+	log.Fatal(r.Run(":8080"))
 }
