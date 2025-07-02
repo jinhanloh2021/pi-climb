@@ -22,7 +22,7 @@ export default async function ProtectedPage() {
   }
 
   // todo: api folders, url folder, authenticate requests
-  const response = await fetch("http://localhost:8080/myinfo", {
+  const response = await fetch("http://localhost:8080/api/v0/myinfo", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
