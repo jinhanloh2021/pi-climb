@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinhanloh2021/beta-blocker/internal/auth"
 	"github.com/jinhanloh2021/beta-blocker/internal/config"
 	"github.com/jinhanloh2021/beta-blocker/internal/database"
 	"github.com/jinhanloh2021/beta-blocker/internal/handler"
@@ -25,11 +26,12 @@ func main() {
 	userRepo := repository.NewUserRepository(database.DB)
 	userService := service.NewUserService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
+	jwtValidator := auth.NewSupabaseJWTValidator()
 
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
 
 	apiV0 := r.Group("/api/v0")
-	apiV0.Use(middleware.AuthMiddleware()).Use(middleware.UserAuthContextMiddleware())
+	apiV0.Use(middleware.AuthMiddleware(jwtValidator)).Use(middleware.UserAuthContextMiddleware())
 
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
 	apiV0.GET("/user/:username", userHandler.GetUserByUsername)

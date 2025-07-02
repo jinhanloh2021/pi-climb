@@ -14,7 +14,7 @@ const (
 )
 
 // Validates the JWT from the Authorization header or cookie and sets the userID and claims in the Gin context
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(validator auth.JWTValidator) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := ""
 
@@ -37,7 +37,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userUUID, claims, err := auth.ValidateSupabaseJWT(tokenString)
+		userUUID, claims, err := validator.ValidateSupabaseJWT(tokenString)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token", "details": err.Error()})
 			return

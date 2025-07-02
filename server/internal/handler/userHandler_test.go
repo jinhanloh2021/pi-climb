@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,6 +16,7 @@ import (
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"gorm.io/gorm"
 )
 
 type MockUserService struct {
@@ -91,11 +93,46 @@ func TestGetByUsername_Success(t *testing.T) {
 	err := json.Unmarshal(w.Body.Bytes(), &responseBody)
 	assert.NoError(t, err)
 	assert.Contains(t, responseBody, "user")
+	assert.NotContains(t, responseBody, "error")
 
 	userMap := responseBody["user"].(map[string]any)
 	assert.Equal(t, targetUsername, userMap["Username"])
 	assert.Equal(t, testUserUUID.String(), userMap["SupabaseID"])
 
 	// verifies each expected method was called with correct arguments and number of times. mock.On()
+	mockUserService.AssertExpectations(t)
+}
+
+func TestGetByUsername_NotFound(t *testing.T) {
+	// Arrange
+	mockUserService := new(MockUserService)
+	userHandler := NewUserHandler(mockUserService)
+
+	targetUsername := "nonExistentUser"
+	testUserUUID := uuid.New()
+
+	mockUserService.On("GetUserByUsername", mock.Anything, targetUsername, mock.AnythingOfType("uuid.UUID")).Return(nil, gorm.ErrRecordNotFound).Once()
+
+	c, w := createTestContext(http.MethodGet, "/user/"+targetUsername, nil)
+	c.Params = gin.Params{
+		gin.Param{Key: "username", Value: targetUsername},
+	}
+	c.Set(middleware.UserUUIDKey, testUserUUID)
+
+	// Act
+	userHandler.GetUserByUsername(c)
+
+	// Assert
+	assert.Equal(t, http.StatusNotFound, w.Code)
+
+	var responseBody map[string]any
+	err := json.Unmarshal(w.Body.Bytes(), &responseBody)
+	assert.NoError(t, err)
+	assert.Contains(t, responseBody, "error")
+	assert.NotContains(t, responseBody, "user")
+
+	errString := responseBody["error"].(string)
+	assert.Equal(t, fmt.Sprintf("User %s not found", targetUsername), errString)
+
 	mockUserService.AssertExpectations(t)
 }

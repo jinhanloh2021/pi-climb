@@ -16,15 +16,25 @@ type CustomClaims struct {
 	Exp          int64          `json:"exp"`
 	Iat          int64          `json:"iat"`
 	Iss          string         `json:"iss"`
-	Sub          string         `json:"sub"` // Supabase User ID (UUID string)
+	Sub          string         `json:"sub"`
 	Email        string         `json:"email"`
 	UserMetaData map[string]any `json:"user_metadata"`
 	AppMetaData  map[string]any `json:"app_metadata"`
 	jwt.RegisteredClaims
 }
 
+type JWTValidator interface {
+	ValidateSupabaseJWT(tokenString string) (uuid.UUID, *CustomClaims, error)
+}
+
+type supabaseJWTValidator struct{}
+
+func NewSupabaseJWTValidator() JWTValidator {
+	return &supabaseJWTValidator{}
+}
+
 // Validates the JWT issued by Supabase
-func ValidateSupabaseJWT(tokenString string) (uuid.UUID, *CustomClaims, error) {
+func (s *supabaseJWTValidator) ValidateSupabaseJWT(tokenString string) (uuid.UUID, *CustomClaims, error) {
 	// Supabase JWTs are signed with HMAC SHA256 using the JWT secret from your project settings.
 	jwtSecret := config.LoadConfig().SupabaseJWTSecret
 
