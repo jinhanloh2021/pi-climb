@@ -24,8 +24,14 @@ func main() {
 
 	// Initialize Repositories and Services
 	userRepo := repository.NewUserRepository(database.DB)
+	postRepo := repository.NewPostRepository(database.DB)
+
 	userService := service.NewUserService(userRepo)
+	postService := service.NewPostService(postRepo)
+
 	userHandler := handler.NewUserHandler(userService)
+	postHandler := handler.NewPostHandler(postService)
+
 	jwtValidator := auth.NewSupabaseJWTValidator()
 
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
@@ -36,6 +42,8 @@ func main() {
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
 	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
 	apiV0.PATCH("/user", userHandler.UpdateUser)
+
+	apiV0.POST("/post", postHandler.CreateNewPost)
 	apiV0.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
 	log.Fatal(r.Run(":8080"))

@@ -21,6 +21,10 @@ type userService struct {
 	userRepo repository.UserRepository
 }
 
+func NewUserService(repo repository.UserRepository) UserService {
+	return &userService{userRepo: repo}
+}
+
 func (s *userService) GetUserByUUID(c context.Context, callerID uuid.UUID, supabaseID uuid.UUID) (*models.User, error) {
 	user, err := s.userRepo.FindBySupabaseID(c, callerID, supabaseID)
 	if err != nil {
@@ -52,8 +56,4 @@ func (s *userService) UpdateUser(c context.Context, userID uuid.UUID, body *dto.
 		return nil, err
 	}
 	return user, nil
-}
-
-func NewUserService(repo repository.UserRepository) UserService {
-	return &userService{userRepo: repo}
 }
