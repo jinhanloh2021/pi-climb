@@ -35,6 +35,7 @@ func main() {
 
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
 	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
+	apiV0.PATCH("/user", userHandler.UpdateUser)
 	apiV0.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
 	log.Fatal(r.Run(":8080"))

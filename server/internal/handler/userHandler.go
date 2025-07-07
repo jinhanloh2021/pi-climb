@@ -21,8 +21,8 @@ func NewUserHandler(s service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetMyUser(c *gin.Context) {
-	supabaseID, _ := middleware.GetUserUUID(c)
-	user, err := h.userService.GetUserByUUID(c.Request.Context(), supabaseID)
+	supabaseID, _ := middleware.GetUserUUID(c) // caller is also target, get self
+	user, err := h.userService.GetUserByUUID(c.Request.Context(), supabaseID, supabaseID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User"})
 		return
@@ -48,6 +48,23 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": user})
 }
 
+func (h *UserHandler) UpdateUser(c *gin.Context) {
+	userUUID, _ := middleware.GetUserUUID(c)
+	var reqBody dto.UpdateUserRequest
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		return
+	}
+
+	user, err := h.userService.UpdateUser(c.Request.Context(), userUUID, &reqBody)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error updating user %s", userUUID)})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+// purely for testing RLS
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
 	callerID, _ := middleware.GetUserUUID(c)
 	var reqBody dto.UpdateDOBRequest
