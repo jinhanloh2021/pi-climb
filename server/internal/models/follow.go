@@ -3,15 +3,16 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Follow struct {
-	FromUserID uint  `gorm:"primaryKey;not null;index"`
-	FromUser   *User `gorm:"foreignKey:FromUserID;references:ID"`
+	FromUserID uuid.UUID `gorm:"primaryKey;not null;index"`
+	FromUser   *User     `gorm:"foreignKey:FromUserID;references:ID"`
 
-	ToUserID uint  `gorm:"primaryKey;not null;index"`
-	ToUser   *User `gorm:"foreignKey:ToUserID;references:ID"`
+	ToUserID uuid.UUID `gorm:"primaryKey;not null;index"`
+	ToUser   *User     `gorm:"foreignKey:ToUserID;references:ID"`
 
 	CreatedAt *time.Time
 	UpdatedAt *time.Time

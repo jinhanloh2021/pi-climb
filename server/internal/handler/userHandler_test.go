@@ -81,7 +81,7 @@ func TestGetByUsername_Success(t *testing.T) {
 	c.Params = gin.Params{
 		gin.Param{Key: "username", Value: targetUsername},
 	}
-	c.Set(middleware.UserUUIDKey, testUserUUID)
+	c.Set(middleware.UserIDKey, testUserUUID)
 
 	// Act
 	userHandler.GetUserByUsername(c)
@@ -117,7 +117,7 @@ func TestGetByUsername_NotFound(t *testing.T) {
 	c.Params = gin.Params{
 		gin.Param{Key: "username", Value: targetUsername},
 	}
-	c.Set(middleware.UserUUIDKey, testUserUUID)
+	c.Set(middleware.UserIDKey, testUserUUID)
 
 	// Act
 	userHandler.GetUserByUsername(c)

@@ -13,7 +13,7 @@ import (
 )
 
 type UserRepository interface {
-	FindBySupabaseID(c context.Context, callerID uuid.UUID, supabaseID uuid.UUID) (*models.User, error)
+	FindByUserID(c context.Context, userID uuid.UUID, targetID uuid.UUID) (*models.User, error)
 	SetDOBBySupabaseID(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
 	FindByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error)
 	UpdateUser(c context.Context, userID uuid.UUID, body *dto.UpdateUserRequest) (*models.User, error)
@@ -28,10 +28,10 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 }
 
 // TODO: Logic for private/public profiles, check if following
-func (r *userRepository) FindBySupabaseID(c context.Context, callerID uuid.UUID, supabaseID uuid.UUID) (*models.User, error) {
+func (r *userRepository) FindByUserID(c context.Context, userID uuid.UUID, targetID uuid.UUID) (*models.User, error) {
 	var user models.User
-	err := r.withRLSTransaction(c, callerID, func(tx *gorm.DB) error {
-		findResult := tx.Where("supabase_id = ?", supabaseID).First(&user)
+	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		findResult := tx.Where("id = ?", targetID).First(&user)
 		if findResult.Error != nil {
 			if errors.Is(findResult.Error, gorm.ErrRecordNotFound) {
 				return gorm.ErrRecordNotFound
@@ -40,7 +40,6 @@ func (r *userRepository) FindBySupabaseID(c context.Context, callerID uuid.UUID,
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +60,6 @@ func (r *userRepository) FindByUsername(c context.Context, username string, user
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +93,6 @@ func (r *userRepository) UpdateUser(c context.Context, userID uuid.UUID, body *d
 			}
 			return nil
 		})
-
 		if err != nil {
 			return nil, err
 		}
@@ -114,7 +111,6 @@ func (r *userRepository) UpdateUser(c context.Context, userID uuid.UUID, body *d
 
 		return tx.Where("supabase_id = ?", userID).First(&user).Error
 	})
-
 	if err != nil {
 		return nil, err
 	}

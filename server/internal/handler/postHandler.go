@@ -25,7 +25,7 @@ func (h *PostHandler) CreateNewPost(c *gin.Context) {
 		return
 	}
 
-	userID, _ := middleware.GetUserUUID(c)
+	userID, _ := middleware.GetUserID(c)
 
 	post, err := h.postService.CreatePost(c.Request.Context(), userID, &body)
 	if err != nil {

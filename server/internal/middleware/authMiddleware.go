@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	UserUUIDKey = "SupabaseID"
-	ClaimsKey   = "Claims"
+	UserIDKey = "UserID"
+	ClaimsKey = "Claims"
 )
 
 // Validates the JWT from the Authorization header or cookie and sets the userID and claims in the Gin context
@@ -37,13 +37,13 @@ func AuthMiddleware(validator auth.JWTValidator) gin.HandlerFunc {
 			return
 		}
 
-		userUUID, claims, err := validator.ValidateSupabaseJWT(tokenString)
+		userID, claims, err := validator.ValidateSupabaseJWT(tokenString)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token", "details": err.Error()})
 			return
 		}
 
-		c.Set(UserUUIDKey, userUUID)
+		c.Set(UserIDKey, userID)
 		c.Set(ClaimsKey, claims)
 
 		c.Next() // Call Next handler

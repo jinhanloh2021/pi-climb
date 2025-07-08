@@ -8,8 +8,7 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	SupabaseID  uuid.UUID `gorm:"type:uuid;unique;not null;index"`
+	ID          uuid.UUID `gorm:"type:uuid;primarykey"`
 	Email       string    `gorm:"unique;not null"`
 	Username    string    `gorm:"unique;size:64;not null"`
 	Bio         *string   `gorm:"size:255"`
@@ -29,4 +28,8 @@ type User struct {
 	Likes []Like `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
 
 	Comments []Comment `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
+
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }

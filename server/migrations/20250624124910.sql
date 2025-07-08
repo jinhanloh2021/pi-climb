@@ -10,7 +10,7 @@ BEGIN
     -- Generate a unique placeholder username
     generated_username := 'user_' || REPLACE(NEW.id::text, '-', '');
     INSERT INTO public.users (
-        supabase_id,
+        id,
         email,
         username,
         created_at,

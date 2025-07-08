@@ -3,12 +3,13 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Like struct {
-	UserID uint  `gorm:"primaryKey;not null"`
-	User   *User `gorm:"foreignKey:UserID;references:ID"`
+	UserID uuid.UUID `gorm:"primaryKey;not null"`
+	User   *User     `gorm:"foreignKey:UserID;references:ID"`
 
 	PostID uint  `gorm:"primaryKey;not null;index"`
 	Post   *Post `gorm:"foreignKey:PostID;references:ID"`

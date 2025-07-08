@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type Post struct {
 	gorm.Model
@@ -8,8 +11,8 @@ type Post struct {
 	HoldColour *string `gorm:"size:64"`
 	Grade      *string `gorm:"size:64"`
 
-	UserID uint  `gorm:"not null;index"`
-	User   *User `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE;"`
+	UserID uuid.UUID `gorm:"not null;index"`
+	User   *User     `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE;"`
 
 	Media []Media `gorm:"polymorphic:Owner;polymorphicValue:posts;constraint:OnDelete:CASCADE;"`
 

@@ -8,8 +8,8 @@ import (
 )
 
 // Get requesting user's UUID
-func GetUserUUID(c *gin.Context) (uuid.UUID, bool) {
-	userUUIDAny, ok := c.Get(UserUUIDKey)
+func GetUserID(c *gin.Context) (uuid.UUID, bool) {
+	userUUIDAny, ok := c.Get(UserIDKey)
 	if !ok {
 		return uuid.Nil, false
 	}
@@ -23,7 +23,7 @@ func GetUserUUID(c *gin.Context) (uuid.UUID, bool) {
 // UserAuthContextMiddleware ensures the user UUID is present and valid in the context, run after main auth middleware
 func UserAuthContextMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		_, ok := GetUserUUID(c)
+		_, ok := GetUserID(c)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Authentication context missing or invalid, user UUID not found in context after auth"})
 			return

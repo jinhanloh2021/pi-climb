@@ -21,8 +21,8 @@ func NewUserHandler(s service.UserService) *UserHandler {
 }
 
 func (h *UserHandler) GetMyUser(c *gin.Context) {
-	supabaseID, _ := middleware.GetUserUUID(c) // caller is also target, get self
-	user, err := h.userService.GetUserByUUID(c.Request.Context(), supabaseID, supabaseID)
+	userID, _ := middleware.GetUserID(c) // caller is also target, get self
+	user, err := h.userService.GetUserByID(c.Request.Context(), userID, userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving User"})
 		return
@@ -35,7 +35,7 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 }
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
-	userUUID, _ := middleware.GetUserUUID(c)
+	userUUID, _ := middleware.GetUserID(c)
 	user, err := h.userService.GetUserByUsername(c.Request.Context(), c.Param("username"), userUUID) // url param
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -49,7 +49,7 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 }
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
-	userUUID, _ := middleware.GetUserUUID(c)
+	userUUID, _ := middleware.GetUserID(c)
 	var reqBody dto.UpdateUserRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
@@ -66,7 +66,7 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 
 // purely for testing RLS
 func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
-	callerID, _ := middleware.GetUserUUID(c)
+	callerID, _ := middleware.GetUserID(c)
 	var reqBody dto.UpdateDOBRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})

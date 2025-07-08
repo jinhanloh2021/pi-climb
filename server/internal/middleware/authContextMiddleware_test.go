@@ -20,7 +20,7 @@ func createTestContext() (*gin.Context, *httptest.ResponseRecorder) {
 
 func HelperSetUserUUIDMiddleware(testUUID any) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set(UserUUIDKey, testUUID)
+		c.Set(UserIDKey, testUUID)
 		c.Next()
 	}
 }
@@ -28,9 +28,9 @@ func HelperSetUserUUIDMiddleware(testUUID any) gin.HandlerFunc {
 func TestGetUserUUID_Success(t *testing.T) {
 	c, _ := createTestContext()
 	expectedUUID := uuid.New()
-	c.Set(UserUUIDKey, expectedUUID)
+	c.Set(UserIDKey, expectedUUID)
 
-	actualUUID, ok := GetUserUUID(c)
+	actualUUID, ok := GetUserID(c)
 	assert.True(t, ok, "Expected UUID to be found")
 	assert.Equal(t, expectedUUID, actualUUID, "Retrieved UUID should match expected UUID")
 }
@@ -41,16 +41,16 @@ func TestGetUserUUID_NotFound(t *testing.T) {
 	// expectedUUID := uuid.New()
 	// c.Set(UserUUIDKey, expectedUUID)
 
-	actualUUID, ok := GetUserUUID(c)
+	actualUUID, ok := GetUserID(c)
 	assert.False(t, ok, "Expected UUID not to be found")
 	assert.Equal(t, uuid.Nil, actualUUID, "Retrieved UUID should be nil UUID")
 }
 
 func TestGetUserUUID_InvalidType(t *testing.T) {
 	c, _ := createTestContext()
-	c.Set(UserUUIDKey, "string not UUID type")
+	c.Set(UserIDKey, "string not UUID type")
 
-	actualUUID, ok := GetUserUUID(c)
+	actualUUID, ok := GetUserID(c)
 	assert.False(t, ok, "Expected UUID not to be found due to invalid type")
 	assert.Equal(t, uuid.Nil, actualUUID, "Retrieved UUID should be nil UUID for invalid type")
 }

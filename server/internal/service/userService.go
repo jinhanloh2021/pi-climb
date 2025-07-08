@@ -11,7 +11,7 @@ import (
 )
 
 type UserService interface {
-	GetUserByUUID(c context.Context, callerID uuid.UUID, supabaseID uuid.UUID) (*models.User, error)
+	GetUserByID(c context.Context, userID uuid.UUID, targetID uuid.UUID) (*models.User, error)
 	GetUserByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error)
 	UpdateUser(c context.Context, userID uuid.UUID, body *dto.UpdateUserRequest) (*models.User, error)
 	SetUserDOB(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
@@ -25,8 +25,8 @@ func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{userRepo: repo}
 }
 
-func (s *userService) GetUserByUUID(c context.Context, callerID uuid.UUID, supabaseID uuid.UUID) (*models.User, error) {
-	user, err := s.userRepo.FindBySupabaseID(c, callerID, supabaseID)
+func (s *userService) GetUserByID(c context.Context, userID uuid.UUID, targetID uuid.UUID) (*models.User, error) {
+	user, err := s.userRepo.FindByUserID(c, userID, targetID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,6 @@ func (s *userService) GetUserByUsername(c context.Context, username string, user
 }
 
 func (s *userService) UpdateUser(c context.Context, userID uuid.UUID, body *dto.UpdateUserRequest) (*models.User, error) {
-
 	user, err := s.userRepo.UpdateUser(c, userID, body)
 	if err != nil {
 		return nil, err
