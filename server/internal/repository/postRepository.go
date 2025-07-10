@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -30,16 +29,9 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 			Caption:    body.Caption,
 			HoldColour: body.HoldColour,
 			Grade:      body.Grade,
+			UserID:     userID,
 			GymID:      body.GymID,
 		}
-		var user models.User
-		if findUserErr := tx.Select("id").Where("supabase_id = ?", userID).First(&user).Error; findUserErr != nil {
-			if errors.Is(findUserErr, gorm.ErrRecordNotFound) {
-				return gorm.ErrRecordNotFound
-			}
-			return fmt.Errorf("failed to find user: %w", findUserErr)
-		}
-		newPost.UserID = user.ID // Set the GORM UserID
 
 		if createErr := tx.Create(&newPost).Error; createErr != nil {
 			return fmt.Errorf("failed to create post: %w", createErr)
@@ -49,13 +41,24 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 		if len(body.Media) > 0 {
 			mediaRecords := make([]models.Media, len(body.Media))
 			for i, mediaDto := range body.Media {
-
 				mediaRecords[i] = models.Media{
-					URL:       mediaDto.URL,
-					MediaType: models.MediaType(mediaDto.MediaType),
-					Order:     mediaDto.Order,
+					URL:           mediaDto.URL,
+					StoragePath:   mediaDto.StoragePath,
+					ThumbnailURL:  mediaDto.ThumbnailURL,
+					CompressedURL: mediaDto.CompressedURL,
+
+					Filename: mediaDto.Filename,
+					FileSize: mediaDto.FileSize,
+					MimeType: mediaDto.MimeType,
+					Order:    mediaDto.Order,
+
+					Width:    mediaDto.Width,
+					Height:   mediaDto.Height,
+					Duration: mediaDto.Duration,
+
 					OwnerID:   newPost.ID, // Link to the newly created Post
 					OwnerType: "posts",    // Polymorphic association value
+					UserID:    userID,
 				}
 			}
 
@@ -70,7 +73,6 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 		post = &newPost
 		return nil
 	})
-
 	if err != nil {
 		return nil, err
 	}

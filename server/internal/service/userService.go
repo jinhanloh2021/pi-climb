@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/dto"
@@ -12,9 +11,8 @@ import (
 
 type UserService interface {
 	GetUserByID(c context.Context, userID uuid.UUID, targetID uuid.UUID) (*models.User, error)
-	GetUserByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error)
+	GetUserByUsername(c context.Context, username string, userID uuid.UUID) (*models.User, error)
 	UpdateUser(c context.Context, userID uuid.UUID, body *dto.UpdateUserRequest) (*models.User, error)
-	SetUserDOB(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error)
 }
 
 type userService struct {
@@ -33,16 +31,8 @@ func (s *userService) GetUserByID(c context.Context, userID uuid.UUID, targetID 
 	return user, nil
 }
 
-func (s *userService) SetUserDOB(c context.Context, targetID uuid.UUID, callerID uuid.UUID, DOB *time.Time) (*models.User, error) {
-	user, err := s.userRepo.SetDOBBySupabaseID(c, targetID, callerID, DOB)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
-}
-
-func (s *userService) GetUserByUsername(c context.Context, username string, userUUID uuid.UUID) (*models.User, error) {
-	user, err := s.userRepo.FindByUsername(c, username, userUUID)
+func (s *userService) GetUserByUsername(c context.Context, username string, userID uuid.UUID) (*models.User, error) {
+	user, err := s.userRepo.FindByUsername(c, username, userID)
 	if err != nil {
 		return nil, err
 	}

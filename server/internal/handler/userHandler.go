@@ -35,8 +35,8 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 }
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
-	userUUID, _ := middleware.GetUserID(c)
-	user, err := h.userService.GetUserByUsername(c.Request.Context(), c.Param("username"), userUUID) // url param
+	userID, _ := middleware.GetUserID(c)
+	user, err := h.userService.GetUserByUsername(c.Request.Context(), c.Param("username"), userID) // url param
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("User %s not found", c.Param("username"))})
@@ -49,36 +49,16 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 }
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
-	userUUID, _ := middleware.GetUserID(c)
+	userID, _ := middleware.GetUserID(c)
 	var reqBody dto.UpdateUserRequest
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
 		return
 	}
 
-	user, err := h.userService.UpdateUser(c.Request.Context(), userUUID, &reqBody)
+	user, err := h.userService.UpdateUser(c.Request.Context(), userID, &reqBody)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error updating user %s", userUUID)})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"user": user})
-}
-
-// purely for testing RLS
-func (h *UserHandler) TrySetDifferentUserDOB(c *gin.Context) {
-	callerID, _ := middleware.GetUserID(c)
-	var reqBody dto.UpdateDOBRequest
-	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
-		return
-	}
-
-	targetID := reqBody.TargetUserID
-	DOB := reqBody.DateOfBirth
-
-	user, err := h.userService.SetUserDOB(c.Request.Context(), targetID, callerID, &DOB)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error setting DOB. " + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error updating user %s", userID)})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"user": user})

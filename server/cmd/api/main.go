@@ -44,7 +44,6 @@ func main() {
 	apiV0.PATCH("/user", userHandler.UpdateUser)
 
 	apiV0.POST("/post", postHandler.CreateNewPost)
-	apiV0.PATCH("/dob", userHandler.TrySetDifferentUserDOB)
 
 	log.Fatal(r.Run(":8080"))
 }

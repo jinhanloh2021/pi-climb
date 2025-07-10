@@ -21,7 +21,7 @@ func NewPostHandler(s service.PostService) *PostHandler {
 func (h *PostHandler) CreateNewPost(c *gin.Context) {
 	var body dto.CreatePostRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
 		return
 	}
 
