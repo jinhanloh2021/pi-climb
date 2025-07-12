@@ -31,7 +31,7 @@ func (h *UserHandler) GetMyUser(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"User": user})
+	c.JSON(http.StatusOK, user)
 }
 
 func (h *UserHandler) GetUserByUsername(c *gin.Context) {
@@ -45,7 +45,7 @@ func (h *UserHandler) GetUserByUsername(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error retrieving user by username"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, user)
 }
 
 func (h *UserHandler) UpdateUser(c *gin.Context) {
@@ -61,5 +61,5 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error updating user %s", userID)})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	c.JSON(http.StatusOK, user)
 }

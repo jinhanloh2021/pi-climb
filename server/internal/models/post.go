@@ -1,27 +1,33 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type Post struct {
-	gorm.Model
-	Caption    *string `gorm:"size:512"`
-	HoldColour *string `gorm:"size:64"`
-	Grade      *string `gorm:"size:64"`
+	ID        uint           `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	UserID uuid.UUID `gorm:"not null;index"`
-	User   *User     `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE;"`
+	Caption    *string `gorm:"size:512" json:"caption"`
+	HoldColour *string `gorm:"size:64" json:"hold_colour"`
+	Grade      *string `gorm:"size:64" json:"grade"`
 
-	Media []Media `gorm:"polymorphic:Owner;polymorphicValue:posts;constraint:OnDelete:CASCADE;"`
+	UserID uuid.UUID `gorm:"not null;index" json:"user_id"`
+	User   *User     `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE;" json:"user,omitempty"`
 
-	Likes     []Like `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	LikeCount uint   `gorm:"not null;default:0"` // update in app level in hook, AfterUpdate
+	Media []Media `gorm:"polymorphic:Owner;polymorphicValue:posts;constraint:OnDelete:CASCADE;" json:"media,omitempty"`
 
-	Comments     []Comment `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	CommentCount uint      `gorm:"not null;default:0"`
+	Likes     []Like `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"likes,omitempty"`
+	LikeCount uint   `gorm:"not null;default:0" json:"like_count"`
 
-	GymID *uint // optional Gym relation
-	Gym   *Gym  `gorm:"foreignKey:GymID;references:ID"`
+	Comments     []Comment `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"comments,omitempty"`
+	CommentCount uint      `gorm:"not null;default:0" json:"comment_count"`
+
+	GymID *uint `json:"gym_id"`
+	Gym   *Gym  `gorm:"foreignKey:GymID;references:ID" json:"gym,omitempty"`
 }

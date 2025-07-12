@@ -32,6 +32,6 @@ func (h *PostHandler) CreateNewPost(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error creating post")})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"post": post})
+	c.JSON(http.StatusCreated, post)
 	return
 }

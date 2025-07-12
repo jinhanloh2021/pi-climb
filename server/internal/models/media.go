@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -8,26 +10,31 @@ import (
 type MediaType string
 
 type Media struct {
-	gorm.Model
+	ID        uint           `gorm:"primarykey" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	URL           string `gorm:"not null;size:512"`
-	StoragePath   string `gorm:"size:512"` // Original storage path
-	ThumbnailURL  string `gorm:"size:512"` // Thumbnail/preview URL
-	CompressedURL string `gorm:"size:512"` // Compressed version URL
+	URL           string `gorm:"not null;size:512" json:"url"`
+	StoragePath   string `gorm:"size:512" json:"storage_path"`
+	ThumbnailURL  string `gorm:"size:512" json:"thumbnail_url"`
+	CompressedURL string `gorm:"size:512" json:"compressed_url"`
 
-	Filename string `gorm:"size:255"` // Original filename
-	FileSize int64  `gorm:"not null"` // Size in bytes
-	MimeType string `gorm:"size:100"` // image/jpeg, video/mp4
-	Order    *int   `gorm:"default:0"`
+	Filename string `gorm:"size:255" json:"filename"`
+	FileSize int64  `gorm:"not null" json:"file_size"`
 
-	Width    *int `gorm:"default:null"` // Pixel width
-	Height   *int `gorm:"default:null"` // Pixel height
-	Duration *int `gorm:"default:null"` // Video duration in seconds
+	MimeType string `gorm:"size:100" json:"mime_type"`
+	Order    *int   `gorm:"default:0" json:"order"`
+
+	Width    *int `gorm:"default:null" json:"width"`
+	Height   *int `gorm:"default:null" json:"height"`
+	Duration *int `gorm:"default:null" json:"duration"`
 
 	// Polymorphic Association
-	OwnerID   uint   `gorm:"not null;index:idx_owner"`
-	OwnerType string `gorm:"not null;index:idx_owner"` // post, user, gym,etc.
+	OwnerID   uint   `gorm:"not null;index:idx_owner" json:"owner_id"`
+	OwnerType string `gorm:"not null;index:idx_owner" json:"owner_type"`
+
 	// Ownership
-	UserID uuid.UUID `gorm:"type:uuid;not null;index"`
-	User   User      `gorm:"foreignKey:UserID"`
+	UserID uuid.UUID `gorm:"type:uuid;not null;index" json:"user_id"`
+	User   User      `gorm:"foreignKey:UserID" json:"user"`
 }

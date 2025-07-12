@@ -8,30 +8,27 @@ import (
 )
 
 type User struct {
-	ID          uuid.UUID `gorm:"type:uuid;primarykey"`
-	Email       string    `gorm:"unique;not null"`
-	Username    string    `gorm:"unique;size:64;not null"`
-	Bio         *string   `gorm:"size:255"`
-	IsPublic    bool      `gorm:"default:true"`
-	PhoneNumber *string   `gorm:"unique"`
-	DateOfBirth *time.Time
+	ID          uuid.UUID  `gorm:"type:uuid;primarykey" json:"id"`
+	Email       string     `gorm:"unique;not null" json:"email"`
+	Username    string     `gorm:"unique;size:64;not null" json:"username"`
+	Bio         *string    `gorm:"size:255" json:"bio"`
+	IsPublic    bool       `gorm:"default:true" json:"is_public"`
+	PhoneNumber *string    `gorm:"unique" json:"phone_number"`
+	DateOfBirth *time.Time `json:"date_of_birth"`
 
-	Followers      []Follow `gorm:"foreignKey:ToUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	FollowerCount  uint     `gorm:"not null;default:0"`
-	Following      []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-	FollowingCount uint     `gorm:"not null;default:0"`
+	// Relationships - be careful about circular references
+	Followers      []Follow `gorm:"foreignKey:ToUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"followers,omitempty"`
+	FollowerCount  uint     `gorm:"not null;default:0" json:"follower_count"`
+	Following      []Follow `gorm:"foreignKey:FromUserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"following,omitempty"`
+	FollowingCount uint     `gorm:"not null;default:0" json:"following_count"`
 
-	Avatar *Media `gorm:"polymorphic:Owner;polymorphicValue:users;constraint:OnDelete:CASCADE"`
+	Avatar   *Media    `gorm:"polymorphic:Owner;polymorphicValue:users;constraint:OnDelete:CASCADE" json:"avatar,omitempty"`
+	Posts    []Post    `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"posts,omitempty"`
+	Likes    []Like    `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"likes,omitempty"`
+	Comments []Comment `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"comments,omitempty"`
+	Media    []Media   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE" json:"media,omitempty"`
 
-	Posts []Post `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-
-	Likes []Like `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-
-	Comments []Comment `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE"`
-
-	Media []Media `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:SET NULL,OnUpdate:CASCADE"`
-
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt gorm.DeletedAt `gorm:"index"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
