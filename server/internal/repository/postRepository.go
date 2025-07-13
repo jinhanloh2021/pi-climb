@@ -12,6 +12,8 @@ import (
 
 type PostRepository interface {
 	CreateNewPost(c context.Context, userID uuid.UUID, body *dto.CreatePostRequest) (*models.Post, error)
+	GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error)
+	GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error)
 }
 
 type postRepository struct {
@@ -77,4 +79,14 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 		return nil, err
 	}
 	return post, nil
+}
+
+func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error) {
+	// todo: Get posts of following, sorted by createdAt descending
+	return nil, nil
+}
+
+func (r *postRepository) GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error) {
+	// todo: Get posts of all users, sorted by likes or views
+	return nil, nil
 }

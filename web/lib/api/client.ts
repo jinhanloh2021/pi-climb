@@ -67,7 +67,6 @@ class ApiClient {
     return response.json();
   }
 
-  // HTTP Methods
   async get<T>(endpoint: string): Promise<T> {
     return this.request<T>(endpoint, { method: "GET" });
   }

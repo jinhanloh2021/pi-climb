@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen flex flex-col items-center">
-      <div>Not logged in. Marketing page</div>
+      <div>Home page on root route</div>
     </main>
   );
 }

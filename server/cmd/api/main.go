@@ -28,9 +28,11 @@ func main() {
 
 	userService := service.NewUserService(userRepo)
 	postService := service.NewPostService(postRepo)
+	feedService := service.NewFeedService(postRepo)
 
 	userHandler := handler.NewUserHandler(userService)
 	postHandler := handler.NewPostHandler(postService)
+	feedHandler := handler.NewFeedHandler(feedService)
 
 	jwtValidator := auth.NewSupabaseJWTValidator()
 
@@ -44,6 +46,8 @@ func main() {
 	apiV0.PATCH("/user", userHandler.UpdateUser)
 
 	apiV0.POST("/post", postHandler.CreateNewPost)
+
+	apiV0.GET("/feed", feedHandler.GetFeed)
 
 	log.Fatal(r.Run(":8080"))
 }

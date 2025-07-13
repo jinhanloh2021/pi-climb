@@ -25,6 +25,8 @@ type Post struct {
 	Likes     []Like `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"likes,omitempty"`
 	LikeCount uint   `gorm:"not null;default:0" json:"like_count"`
 
+	Views uint `gorm:"not null;default:0" json:"views"`
+
 	Comments     []Comment `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"comments,omitempty"`
 	CommentCount uint      `gorm:"not null;default:0" json:"comment_count"`
 
