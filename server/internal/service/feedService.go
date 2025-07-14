@@ -11,7 +11,7 @@ import (
 )
 
 type FeedService interface {
-	GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error)
+	GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, *dto.FeedCursor, error)
 }
 
 type feedService struct {
@@ -22,17 +22,17 @@ func NewFeedService(r repository.PostRepository) FeedService {
 	return &feedService{postRepo: r}
 }
 
-func (s *feedService) GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, error) {
-	followingFeed, err := s.postRepo.GetFollowingFeed(c, userID, feedCursor)
+func (s *feedService) GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, *dto.FeedCursor, error) {
+	followingFeed, nextFollowingCursor, err := s.postRepo.GetFollowingFeed(c, userID, feedCursor)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	trendingFeed, err := s.postRepo.GetTrendingFeed(c, userID, feedCursor)
+	trendingFeed, nextTrendingCursor, err := s.postRepo.GetTrendingFeed(c, userID, feedCursor)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	feed := slices.Concat(followingFeed, trendingFeed)
 
-	return feed, nil
+	return feed, &dto.FeedCursor{FollowingCursor: nextFollowingCursor, TrendingCursor: nextTrendingCursor}, nil
 }

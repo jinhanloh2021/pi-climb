@@ -24,11 +24,11 @@ func (h *FeedHandler) GetFeed(c *gin.Context) {
 	trendingCursor := c.Query("trending-cursor")
 	var feedCursor dto.FeedCursor = dto.FeedCursor{FollowingCursor: followingCursor, TrendingCursor: trendingCursor}
 
-	feed, err := h.feedService.GetFeed(c.Request.Context(), userID, &feedCursor)
+	feed, nextCursor, err := h.feedService.GetFeed(c.Request.Context(), userID, &feedCursor)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error getting feed")})
 		return
 	}
-	c.JSON(http.StatusOK, feed)
+	c.JSON(http.StatusOK, gin.H{"posts": feed, "nextCursor": nextCursor})
 	return
 }

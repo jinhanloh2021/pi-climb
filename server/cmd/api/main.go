@@ -21,6 +21,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
+	r.SetTrustedProxies([]string{"http://localhost:3000"})
 
 	// Initialize Repositories and Services
 	userRepo := repository.NewUserRepository(database.DB)
