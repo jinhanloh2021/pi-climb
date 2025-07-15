@@ -1,4 +1,4 @@
-package main
+package seed
 
 import (
 	"bytes"
@@ -6,10 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/jinhanloh2021/beta-blocker/scripts/internal/config"
 )
 
 type SignUpRequest struct {
@@ -17,22 +16,13 @@ type SignUpRequest struct {
 	Password string `json:"password"`
 }
 
-func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	supabaseURL := os.Getenv("LOCAL_SUPABASE_URL")
-	supabaseAnonKey := os.Getenv("LOCAL_ANON_KEY")
+func SeedUsers() {
+	seedConfig := config.LoadSeedConfig()
+	supabaseURL := seedConfig.SupabaseURL
+	supabaseAnonKey := seedConfig.AnonKey
 	numUsers := 10
 
-	if supabaseURL == "" || supabaseAnonKey == "" {
-		log.Fatalf("Error: SUPABASE_URL, SUPABASE_ANON_KEY, and NUM_USERS_TO_SEED environment variables must be set.")
-	}
-
 	authURL := fmt.Sprintf("%s/auth/v1/signup", supabaseURL)
-
 	fmt.Printf("Attempting to seed %d users to Supabase Auth at %s\n", numUsers, authURL)
 
 	client := &http.Client{
@@ -74,7 +64,7 @@ func main() {
 		if resp.StatusCode == http.StatusCreated || resp.StatusCode == http.StatusOK {
 			fmt.Printf("Successfully created user: %s\n", email)
 		} else {
-			var errorBody map[string]interface{}
+			var errorBody map[string]any
 			if err := json.NewDecoder(resp.Body).Decode(&errorBody); err != nil {
 				log.Printf("Failed to decode error response for user %s: %v", email, err)
 			}

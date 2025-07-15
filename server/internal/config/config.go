@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync" // For singleton pattern if needed
+	"sync"
 
 	"github.com/joho/godotenv"
 )
 
-// Config holds all application configurations
 type Config struct {
 	DatabaseURL       string
-	SupabaseJWTSecret string // Supabase JWT secret (for verification)
+	SupabaseJWTSecret string
 }
 
 var (
@@ -20,14 +19,11 @@ var (
 	once      sync.Once
 )
 
-// LoadConfig loads environment variables and returns the config struct.
-// It uses a singleton pattern to ensure config is loaded only once.
 func LoadConfig() *Config {
 	once.Do(func() {
 		err := godotenv.Load()
 		if err != nil {
-			// log.Println("No .env file found, assuming environment variables are set.")
-			log.Fatal("Error loading .env file") // Only fatal if .env is strictly required
+			log.Fatal("Error loading .env file")
 		}
 		appEnv := os.Getenv("APP_ENV")
 		dbURL := os.Getenv(fmt.Sprintf("%s_DATABASE_URL", appEnv))

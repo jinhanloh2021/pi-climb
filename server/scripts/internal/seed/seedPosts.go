@@ -1,23 +1,21 @@
-package main
+package seed
 
 import (
 	"log"
-	"os"
 
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
-	"github.com/joho/godotenv"
+	"github.com/jinhanloh2021/beta-blocker/scripts/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func seedPosts() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	dsn := os.Getenv("LOCAL_DATABASE_URL_POSTGRES_ROLE")
+func SeedPosts() {
+	seedConfig := config.LoadSeedConfig()
+	dsn := seedConfig.DbURLPostgresRole
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Error connecting to database as postgres role")
+	}
 
 	var users []models.User
 	db.Find(&users)

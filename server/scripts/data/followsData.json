@@ -1,0 +1,18 @@
+[
+  {
+    "from_user_id": "user1@test.com",
+    "to_user_id": "user2@test.com"
+  },
+  {
+    "from_user_id": "user2@test.com",
+    "to_user_id": "user1@test.com"
+  },
+  {
+    "from_user_id": "user2@test.com",
+    "to_user_id": "user3@test.com"
+  },
+  {
+    "from_user_id": "user2@test.com",
+    "to_user_id": "user4@test.com"
+  }
+]
