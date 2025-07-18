@@ -7,6 +7,7 @@ import (
 
 func main() {
 	config.LoadSeedConfig()
-	// SeedUsers()
+	seed.SeedUsers()
 	seed.SeedFollows()
+	seed.SeedPosts()
 }

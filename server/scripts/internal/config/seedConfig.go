@@ -12,6 +12,7 @@ type Config struct {
 	SupabaseURL       string
 	AnonKey           string
 	DbURLPostgresRole string
+	ServiceRoleKey    string
 }
 
 var (
@@ -28,11 +29,13 @@ func LoadSeedConfig() *Config {
 		supabaseURL := os.Getenv("LOCAL_SUPABASE_URL")
 		anonKey := os.Getenv("LOCAL_ANON_KEY")
 		dbURLPostgresRole := os.Getenv("LOCAL_POSTGRES_DATABASE_URL")
+		serviceRoleKey := os.Getenv("LOCAL_SERVICE_ROLE_KEY")
 
 		seedConfig = &Config{
 			SupabaseURL:       supabaseURL,
 			AnonKey:           anonKey,
 			DbURLPostgresRole: dbURLPostgresRole,
+			ServiceRoleKey:    serviceRoleKey,
 		}
 
 		if seedConfig.SupabaseURL == "" {
@@ -43,6 +46,9 @@ func LoadSeedConfig() *Config {
 		}
 		if seedConfig.DbURLPostgresRole == "" {
 			log.Fatal("LOCAL_POSTGRES_DATABASE_URL not set in environment")
+		}
+		if seedConfig.ServiceRoleKey == "" {
+			log.Fatal("LOCAL_SERVICE_ROLE_KEY not set in environment")
 		}
 	})
 	return seedConfig

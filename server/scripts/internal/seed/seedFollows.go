@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/models"
 	"github.com/jinhanloh2021/beta-blocker/scripts/internal/config"
 	"gorm.io/driver/postgres"
@@ -42,13 +41,13 @@ func SeedFollows() {
 	fmt.Printf("Seeding %d follows...\n", len(follows))
 
 	for _, f := range follows {
-		fromID, err := getUserIDByEmail(db, f.FromUserEmail)
+		fromID, err := GetUserIDByEmail(db, f.FromUserEmail)
 		if err != nil {
 			log.Printf("Skipping follow: cannot find from_user %s: %v", f.FromUserEmail, err)
 			continue
 		}
 
-		toID, err := getUserIDByEmail(db, f.ToUserEmail)
+		toID, err := GetUserIDByEmail(db, f.ToUserEmail)
 		if err != nil {
 			log.Printf("Skipping follow: cannot find to_user %s: %v", f.ToUserEmail, err)
 			continue
@@ -66,13 +65,4 @@ func SeedFollows() {
 		}
 	}
 	fmt.Println("Follow seeding completed")
-}
-
-func getUserIDByEmail(db *gorm.DB, email string) (uuid.UUID, error) {
-	var user models.User
-	findResult := db.Select("id").Where("email = ?", email).First(&user)
-	if findResult.Error != nil {
-		return uuid.Nil, fmt.Errorf("failed to find user by email %s: %w", email, findResult.Error)
-	}
-	return user.ID, nil
 }
