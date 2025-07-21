@@ -7,6 +7,20 @@
     "media": ["image1.jpg"]
   },
   {
+    "user_id": "user1@test.com",
+    "caption": "Cool dyno move",
+    "hold_colour": "#F7377D",
+    "grade": "v5",
+    "media": ["image5.jpg"]
+  },
+  {
+    "user_id": "user1@test.com",
+    "caption": "Difficult red slab, tricky feet",
+    "hold_colour": "#FF2727",
+    "grade": "v6",
+    "media": ["image6.jpg"]
+  },
+  {
     "user_id": "user2@test.com",
     "caption": "Easy send at B+, difficult toe hook",
     "hold_colour": "#000000",
@@ -16,8 +30,15 @@
   {
     "user_id": "user3@test.com",
     "caption": "Fun climb with friends",
-    "hold_colour": "0000FF",
+    "hold_colour": "#0000FF",
     "grade": "v3",
     "media": ["image3.jpg", "image4.jpg"]
+  },
+  {
+    "user_id": "user5@test.com",
+    "caption": "Cool comp route. Hard first move",
+    "hold_colour": "#2756FF",
+    "grade": "v4",
+    "media": ["image7.jpg"]
   }
 ]
