@@ -45,13 +45,12 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 			mediaRecords := make([]models.Media, len(body.Media))
 			for i, mediaDto := range body.Media {
 				mediaRecords[i] = models.Media{
-					URL:           mediaDto.URL,
-					StoragePath:   mediaDto.StoragePath,
-					ThumbnailURL:  mediaDto.ThumbnailURL,
-					CompressedURL: mediaDto.CompressedURL,
+					StorageKey: mediaDto.StorageKey,
+					Bucket:     mediaDto.Bucket,
 
-					Filename: mediaDto.Filename,
-					FileSize: mediaDto.FileSize,
+					OriginalName: mediaDto.OriginalName,
+					FileSize:     mediaDto.FileSize,
+
 					MimeType: mediaDto.MimeType,
 					Order:    mediaDto.Order,
 
@@ -92,7 +91,8 @@ func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, f
 		if findFollowingErr := tx.Model(&models.Follow{}).Select("to_user_id").Where("from_user_id = ?", userID).Find(&followingUserID).Error; findFollowingErr != nil {
 			return fmt.Errorf("failed to find following users: %w", findFollowingErr)
 		}
-		if len(followingUserID) == 0 {
+		followingUserID = append(followingUserID, userID)
+		if len(followingUserID) == 1 {
 			return nil
 		}
 		query := tx.Preload("User").Preload("Media").Where("user_id IN (?)", followingUserID)

@@ -13,10 +13,10 @@ type Media struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 
-	StorageKey string `gorm:"size:512" json:"storage_key"` // e.g. user_id/filename.jpg
-	Bucket     string `gorm:"size:256" json:"bucket"`
+	StorageKey string `gorm:"size:512;not null" json:"storage_key"` // e.g. user_id/filename.jpg
+	Bucket     string `gorm:"size:256;not null" json:"bucket"`
 
-	OriginalName string `gorm:"size:512" json:"original_name"`
+	OriginalName string `gorm:"size:512;not null" json:"original_name"`
 	FileSize     int64  `gorm:"not null" json:"file_size"`
 
 	MimeType string `gorm:"size:128" json:"mime_type"`
