@@ -11,7 +11,7 @@ import (
 )
 
 type FeedService interface {
-	GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, *dto.FeedCursor, error)
+	GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, *dto.FeedCursor, error)
 }
 
 type feedService struct {
@@ -22,12 +22,12 @@ func NewFeedService(r repository.PostRepository) FeedService {
 	return &feedService{postRepo: r}
 }
 
-func (s *feedService) GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, *dto.FeedCursor, error) {
-	followingFeed, nextFollowingCursor, err := s.postRepo.GetFollowingFeed(c, userID, feedCursor)
+func (s *feedService) GetFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, *dto.FeedCursor, error) {
+	followingFeed, nextFollowingCursor, err := s.postRepo.GetFollowingFeed(c, userID, feedCursor, limit)
 	if err != nil {
 		return nil, nil, err
 	}
-	trendingFeed, nextTrendingCursor, err := s.postRepo.GetTrendingFeed(c, userID, feedCursor)
+	trendingFeed, nextTrendingCursor, err := s.postRepo.GetTrendingFeed(c, userID, feedCursor, limit)
 	if err != nil {
 		return nil, nil, err
 	}

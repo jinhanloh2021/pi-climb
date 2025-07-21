@@ -32,7 +32,7 @@ type PostSeedInput struct {
 
 func SeedPosts() {
 	file, err := os.Open("./scripts/data/postsData.json")
-	var bucket string = "media"
+	const bucket string = "media"
 	if err != nil {
 		log.Fatalf("Failed to open follows data file: %v", err)
 	}
@@ -61,14 +61,14 @@ func SeedPosts() {
 		var postMedia []models.Media
 		for j, m := range p.Media {
 			path := "./scripts/data/img/" + m
-			storageKey, err := uploadToSupabaseStorage(userID, path, bucket, m)
-			if err != nil {
-				log.Printf("Skipping media: Failed to upload %s: %v", m, err)
-				continue
-			}
 			mimeType, fileSize, width, height, err := extractImageMetadata(path)
 			if err != nil {
 				log.Printf("Skipping media: Failed to extract metadata from %s: %v", m, err)
+				continue
+			}
+			storageKey, err := uploadToSupabaseStorage(userID, path, bucket, m)
+			if err != nil {
+				log.Printf("Skipping media: Failed to upload %s: %v", m, err)
 				continue
 			}
 			postMedia = append(postMedia, models.Media{
@@ -94,9 +94,8 @@ func SeedPosts() {
 				HoldColour: &p.HoldColour,
 				Grade:      &p.Grade,
 				UserID:     userID,
-				Media:      postMedia,
+				Media:      postMedia, // auto creates Media with poly association
 			}
-			// auto creates media with poly association
 			if err := tx.Create(&post).Error; err != nil {
 				return err
 			}
@@ -110,7 +109,7 @@ func SeedPosts() {
 	}
 }
 
-// should be done by FE
+// Done by FE, then StorageKey sent to BE to create Media object
 func uploadToSupabaseStorage(userID uuid.UUID, filePath, bucket, filename string) (string, error) {
 	log.Printf("Uploading %s to bucket %s", filename, bucket)
 
@@ -134,6 +133,7 @@ func uploadToSupabaseStorage(userID uuid.UUID, filePath, bucket, filename string
 	if err != nil {
 		return "", err
 	}
+	// will be logged-in user for FE
 	req.Header.Set("Authorization", "Bearer "+serviceRoleKey)
 	req.Header.Set("apikey", serviceRoleKey)
 	req.Header.Set("Content-Type", "application/octet-stream")

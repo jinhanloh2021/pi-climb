@@ -13,8 +13,8 @@ import (
 
 type PostRepository interface {
 	CreateNewPost(c context.Context, userID uuid.UUID, body *dto.CreatePostRequest) (*models.Post, error)
-	GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, string, error)
-	GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, string, error)
+	GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error)
+	GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error)
 }
 
 type postRepository struct {
@@ -26,66 +26,55 @@ func NewPostRepository(db *gorm.DB) PostRepository {
 }
 
 func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body *dto.CreatePostRequest) (*models.Post, error) {
-	var post *models.Post
+	var createdPost *models.Post
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
-		newPost := models.Post{
+		mediaRecords := make([]models.Media, len(body.Media))
+		for i, mediaDto := range body.Media {
+			mediaRecords[i] = models.Media{
+				StorageKey: mediaDto.StorageKey,
+				Bucket:     mediaDto.Bucket,
+
+				OriginalName: mediaDto.OriginalName,
+				FileSize:     mediaDto.FileSize,
+
+				MimeType: mediaDto.MimeType,
+				Order:    mediaDto.Order,
+
+				Width:    mediaDto.Width,
+				Height:   mediaDto.Height,
+				Duration: mediaDto.Duration,
+
+				UserID: userID,
+			}
+		}
+
+		post := models.Post{
 			Caption:    body.Caption,
 			HoldColour: body.HoldColour,
 			Grade:      body.Grade,
 			UserID:     userID,
 			GymID:      body.GymID,
+			Media:      mediaRecords,
 		}
-
-		if createErr := tx.Create(&newPost).Error; createErr != nil {
-			return fmt.Errorf("failed to create post: %w", createErr)
+		if err := tx.Create(&post).Error; err != nil {
+			return fmt.Errorf("failed to create post with media: %w", err)
 		}
-
-		// 2. Create associated Media records
-		if len(body.Media) > 0 {
-			mediaRecords := make([]models.Media, len(body.Media))
-			for i, mediaDto := range body.Media {
-				mediaRecords[i] = models.Media{
-					StorageKey: mediaDto.StorageKey,
-					Bucket:     mediaDto.Bucket,
-
-					OriginalName: mediaDto.OriginalName,
-					FileSize:     mediaDto.FileSize,
-
-					MimeType: mediaDto.MimeType,
-					Order:    mediaDto.Order,
-
-					Width:    mediaDto.Width,
-					Height:   mediaDto.Height,
-					Duration: mediaDto.Duration,
-
-					OwnerID:   newPost.ID, // Link to the newly created Post
-					OwnerType: "posts",    // Polymorphic association value
-					UserID:    userID,
-				}
-			}
-
-			if createMediaErr := tx.Create(&mediaRecords).Error; createMediaErr != nil {
-				return fmt.Errorf("failed to create media for post: %w", createMediaErr)
-			}
+		// Load post with associations
+		if err := tx.Preload("Media").Preload("User").Preload("Gym").First(&createdPost, "id = ?", post.ID).Error; err != nil {
+			return fmt.Errorf("failed to retrieve created post with associations: %w", err)
 		}
-
-		if findErr := tx.Preload("Media").Preload("User").Preload("Gym").Where("id = ?", newPost.ID).First(&newPost).Error; findErr != nil {
-			return fmt.Errorf("failed to retrieve created post with associations: %w", findErr)
-		}
-		post = &newPost
 		return nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	return post, nil
+	return createdPost, nil
 }
 
-func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, string, error) {
+func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error) {
 	var posts []models.Post
 	var followingUserID []uuid.UUID
 	var nextCursor string
-	const defaultFeedLimit int = 20
 
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
 		if findFollowingErr := tx.Model(&models.Follow{}).Select("to_user_id").Where("from_user_id = ?", userID).Find(&followingUserID).Error; findFollowingErr != nil {
@@ -101,7 +90,7 @@ func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, f
 			query = query.Where("(created_at < ?) OR (created_at = ? AND id < ?)",
 				time.Unix(0, cursorTimestampNano), time.Unix(0, cursorTimestampNano), cursorPostID)
 		}
-		findPostsErr := query.Order("created_at DESC, id DESC").Limit(defaultFeedLimit).Find(&posts).Error
+		findPostsErr := query.Order("created_at DESC, id DESC").Limit(limit).Find(&posts).Error
 		if findPostsErr != nil {
 			return findPostsErr
 		}
@@ -118,7 +107,7 @@ func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, f
 	return posts, nextCursor, nil
 }
 
-func (r *postRepository) GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor) ([]models.Post, string, error) {
+func (r *postRepository) GetTrendingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error) {
 	// todo: Get posts of all users, sorted by likes or views
 	return nil, "", nil
 }
