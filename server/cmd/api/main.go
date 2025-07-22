@@ -26,14 +26,17 @@ func main() {
 	// Initialize Repositories and Services
 	userRepo := repository.NewUserRepository(database.DB)
 	postRepo := repository.NewPostRepository(database.DB)
+	followRepo := repository.NewFollowRepository(database.DB)
 
 	userService := service.NewUserService(userRepo)
 	postService := service.NewPostService(postRepo)
 	feedService := service.NewFeedService(postRepo)
+	followService := service.NewFollowService(followRepo)
 
 	userHandler := handler.NewUserHandler(userService)
 	postHandler := handler.NewPostHandler(postService)
 	feedHandler := handler.NewFeedHandler(feedService)
+	followHandler := handler.NewFollowHandler(followService)
 
 	jwtValidator := auth.NewSupabaseJWTValidator()
 
@@ -49,6 +52,9 @@ func main() {
 	apiV0.POST("/post", postHandler.CreateNewPost)
 
 	apiV0.GET("/feed", feedHandler.GetFeed)
+
+	apiV0.POST("/follow", followHandler.CreateFollow)
+	apiV0.DELETE("/follow", followHandler.DeleteFollow)
 
 	log.Fatal(r.Run(":8080"))
 }
