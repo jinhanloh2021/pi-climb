@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jinhanloh2021/beta-blocker/internal/dto"
 	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
+	"github.com/jinhanloh2021/beta-blocker/internal/repository"
 	"github.com/jinhanloh2021/beta-blocker/internal/service"
 )
 
@@ -33,6 +35,10 @@ func (h *FollowHandler) CreateFollow(c *gin.Context) {
 	}
 	follow, err := h.followService.CreateFollow(c, fromUserID, toUserID)
 	if err != nil {
+		if errors.Is(err, repository.ErrAlreadyFollowing) {
+			c.JSON(http.StatusConflict, gin.H{"error": "You are already following this user"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error following user %s", body.UserID)})
 		return
 	}
@@ -59,4 +65,24 @@ func (h *FollowHandler) DeleteFollow(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func (h *FollowHandler) GetFollowers(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+	followers, err := h.followService.GetFollowers(c, userID, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not get followers"})
+		return
+	}
+	c.JSON(http.StatusOK, followers)
+}
+
+func (h *FollowHandler) GetFollowing(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+	following, err := h.followService.GetFollowing(c, userID, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not get following"})
+		return
+	}
+	c.JSON(http.StatusOK, following)
 }

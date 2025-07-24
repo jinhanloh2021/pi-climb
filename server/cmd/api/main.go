@@ -48,6 +48,8 @@ func main() {
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
 	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
 	apiV0.PATCH("/user", userHandler.UpdateUser)
+	apiV0.GET("/users/:id/followers") // todo
+	apiV0.GET("/users/:id/following")
 
 	apiV0.POST("/post", postHandler.CreateNewPost)
 
@@ -55,6 +57,8 @@ func main() {
 
 	apiV0.POST("/follow", followHandler.CreateFollow)
 	apiV0.DELETE("/follow", followHandler.DeleteFollow)
+	apiV0.GET("/followers/me", followHandler.GetFollowers)
+	apiV0.GET("/following/me", followHandler.GetFollowing)
 
 	log.Fatal(r.Run(":8080"))
 }
