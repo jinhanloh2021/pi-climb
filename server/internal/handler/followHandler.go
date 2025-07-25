@@ -69,7 +69,17 @@ func (h *FollowHandler) DeleteFollow(c *gin.Context) {
 
 func (h *FollowHandler) GetFollowers(c *gin.Context) {
 	userID, _ := middleware.GetUserID(c)
-	followers, err := h.followService.GetFollowers(c, userID, userID)
+	var targetUserID uuid.UUID = userID
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := uuid.Parse(paramID); err == nil {
+			targetUserID = parsedID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uuid"})
+			return
+		}
+	}
+
+	followers, err := h.followService.GetFollowers(c, userID, targetUserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not get followers"})
 		return
@@ -79,7 +89,17 @@ func (h *FollowHandler) GetFollowers(c *gin.Context) {
 
 func (h *FollowHandler) GetFollowing(c *gin.Context) {
 	userID, _ := middleware.GetUserID(c)
-	following, err := h.followService.GetFollowing(c, userID, userID)
+	var targetUserID uuid.UUID = userID
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := uuid.Parse(paramID); err == nil {
+			targetUserID = parsedID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uuid"})
+			return
+		}
+	}
+
+	following, err := h.followService.GetFollowing(c, userID, targetUserID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not get following"})
 		return
