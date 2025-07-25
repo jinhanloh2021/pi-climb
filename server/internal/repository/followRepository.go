@@ -50,7 +50,7 @@ func (r *followRepository) CreateFollow(c context.Context, fromUserID uuid.UUID,
 
 		// create new row
 		if err = tx.Create(&follow).Error; err != nil {
-			return fmt.Errorf("failed to create follow: %w", err)
+			return fmt.Errorf("failed to create follow")
 		}
 		return nil
 	})

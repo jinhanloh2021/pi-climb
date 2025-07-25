@@ -27,16 +27,19 @@ func main() {
 	userRepo := repository.NewUserRepository(database.DB)
 	postRepo := repository.NewPostRepository(database.DB)
 	followRepo := repository.NewFollowRepository(database.DB)
+	likeRepo := repository.NewLikeRepository(database.DB)
 
 	userService := service.NewUserService(userRepo)
 	postService := service.NewPostService(postRepo)
 	feedService := service.NewFeedService(postRepo)
 	followService := service.NewFollowService(followRepo)
+	likeService := service.NewLikeService(likeRepo)
 
 	userHandler := handler.NewUserHandler(userService)
 	postHandler := handler.NewPostHandler(postService)
 	feedHandler := handler.NewFeedHandler(feedService)
 	followHandler := handler.NewFollowHandler(followService)
+	likeHandler := handler.NewLikeHandler(likeService)
 
 	jwtValidator := auth.NewSupabaseJWTValidator()
 
@@ -46,12 +49,13 @@ func main() {
 	apiV0.Use(middleware.AuthMiddleware(jwtValidator)).Use(middleware.UserAuthContextMiddleware())
 
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
-	apiV0.GET("/user/:username", userHandler.GetUserByUsername)
-	apiV0.PATCH("/user", userHandler.UpdateUser)
+	apiV0.GET("/users/username/:username", userHandler.GetUserByUsername)
+	apiV0.PATCH("/users", userHandler.UpdateUser)
 	apiV0.GET("/users/:id/followers", followHandler.GetFollowers)
 	apiV0.GET("/users/:id/following", followHandler.GetFollowing)
 
-	apiV0.POST("/post", postHandler.CreateNewPost)
+	apiV0.POST("/posts", postHandler.CreateNewPost)
+	apiV0.POST("/posts/:id/likes", likeHandler.CreateLike)
 
 	apiV0.GET("/feed", feedHandler.GetFeed)
 
