@@ -80,7 +80,7 @@ func (r *followRepository) DeleteFollow(c context.Context, fromUserID uuid.UUID,
 func (r *followRepository) GetFollowers(c context.Context, userID uuid.UUID, targetUserID uuid.UUID) ([]models.Follow, error) {
 	var followers []models.Follow
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
-		if err := tx.Select("from_user_id").Preload("FromUser").Preload("ToUser").Where("to_user_id = ?", targetUserID).Find(&followers).Error; err != nil {
+		if err := tx.Select("from_user_id").Preload("FromUser").Where("to_user_id = ?", targetUserID).Find(&followers).Error; err != nil {
 			return fmt.Errorf("failed to find followers of %s: %w", targetUserID, err)
 		}
 		return nil
@@ -94,7 +94,7 @@ func (r *followRepository) GetFollowers(c context.Context, userID uuid.UUID, tar
 func (r *followRepository) GetFollowing(c context.Context, userID uuid.UUID, targetUserID uuid.UUID) ([]models.Follow, error) {
 	var following []models.Follow
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
-		if err := tx.Select("to_user_id").Preload("FromUser").Preload("ToUser").Where("from_user_id = ?", targetUserID).Find(&following).Error; err != nil {
+		if err := tx.Select("to_user_id").Preload("ToUser").Where("from_user_id = ?", targetUserID).Find(&following).Error; err != nil {
 			return fmt.Errorf("failed to find following of %s: %w", targetUserID, err)
 		}
 		return nil
