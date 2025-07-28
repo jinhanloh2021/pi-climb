@@ -57,6 +57,8 @@ func main() {
 	apiV0.POST("/posts", postHandler.CreateNewPost)
 	apiV0.POST("/posts/:id/likes", likeHandler.CreateLike)
 	apiV0.DELETE("/posts/:id/likes", likeHandler.DeleteLike)
+	apiV0.GET("/posts/:id/likes", likeHandler.GetPostLikes)
+	apiV0.GET("/posts/:id/likes/me", likeHandler.GetMyPostLike)
 
 	apiV0.GET("/feed", feedHandler.GetFeed)
 

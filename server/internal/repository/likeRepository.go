@@ -13,8 +13,8 @@ import (
 type LikeRepository interface {
 	CreateLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error)
 	DeleteLike(c context.Context, userID uuid.UUID, postID uint) error
-	GetLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error)
-	GetMyLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error)
+	GetPostLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error)
+	GetMyPostLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error)
 }
 
 type likeRepository struct {
@@ -73,7 +73,7 @@ func (r *likeRepository) DeleteLike(c context.Context, userID uuid.UUID, postID 
 	return nil
 }
 
-func (r *likeRepository) GetLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error) {
+func (r *likeRepository) GetPostLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error) {
 	var likes []models.Like
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
 		if err := tx.Select("user_id").Preload("User").Where("post_id = ?", postID).Find(&likes).Error; err != nil {
@@ -87,6 +87,19 @@ func (r *likeRepository) GetLikes(c context.Context, userID uuid.UUID, postID ui
 	return likes, nil
 }
 
-func (r *likeRepository) GetMyLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error) {
-	return nil, nil
+func (r *likeRepository) GetMyPostLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error) {
+	var like models.Like
+	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		if err := tx.Select("user_id").Where("post_id = ? and user_id = ?", postID, userID).First(&like).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return gorm.ErrRecordNotFound
+			}
+			return fmt.Errorf("failed to find like %w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &like, nil
 }
