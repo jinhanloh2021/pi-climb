@@ -32,13 +32,25 @@ func (s *likeService) CreateLike(c context.Context, userID uuid.UUID, postID uin
 }
 
 func (s *likeService) DeleteLike(c context.Context, userID uuid.UUID, postID uint) error {
+	err := s.LikeRepo.DeleteLike(c, userID, postID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *likeService) GetLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error) {
-	return nil, nil
+	likes, err := s.LikeRepo.GetLikes(c, userID, postID)
+	if err != nil {
+		return nil, err
+	}
+	return likes, nil
 }
 
 func (s *likeService) GetMyLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error) {
-	return nil, nil
+	like, err := s.LikeRepo.GetMyLike(c, userID, postID)
+	if err != nil {
+		return nil, err
+	}
+	return like, nil
 }

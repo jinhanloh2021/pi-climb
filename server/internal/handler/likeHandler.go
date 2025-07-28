@@ -45,3 +45,23 @@ func (h *LikeHandler) CreateLike(c *gin.Context) {
 	c.JSON(http.StatusCreated, like)
 	return
 }
+
+func (h *LikeHandler) DeleteLike(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+
+	var postID uint
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := strconv.ParseUint(paramID, 10, 32); err == nil {
+			postID = uint(parsedID)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uint"})
+			return
+		}
+	}
+	err := h.likeService.DeleteLike(c, userID, postID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error deleting post"})
+		return
+	}
+	c.Status(http.StatusNoContent)
+}

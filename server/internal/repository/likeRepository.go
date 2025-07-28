@@ -57,11 +57,34 @@ func (r *likeRepository) CreateLike(c context.Context, userID uuid.UUID, postID 
 }
 
 func (r *likeRepository) DeleteLike(c context.Context, userID uuid.UUID, postID uint) error {
+	like := models.Like{
+		UserID: userID,
+		PostID: postID,
+	}
+	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		if err := tx.Delete(&like).Error; err != nil {
+			return fmt.Errorf("failed to delete like :%w", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (r *likeRepository) GetLikes(c context.Context, userID uuid.UUID, postID uint) ([]models.Like, error) {
-	return nil, nil
+	var likes []models.Like
+	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		if err := tx.Select("user_id").Preload("User").Where("post_id = ?", postID).Find(&likes).Error; err != nil {
+			return fmt.Errorf("failed to find likes of post %d: %w", postID, err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return likes, nil
 }
 
 func (r *likeRepository) GetMyLike(c context.Context, userID uuid.UUID, postID uint) (*models.Like, error) {
