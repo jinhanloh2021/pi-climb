@@ -53,6 +53,7 @@ func main() {
 	apiV0.PATCH("/users", userHandler.UpdateUser)
 	apiV0.GET("/users/:id/followers", followHandler.GetFollowers)
 	apiV0.GET("/users/:id/following", followHandler.GetFollowing)
+	apiV0.GET("/users/:id/relationship", followHandler.GetFollowRelationship)
 
 	apiV0.POST("/posts", postHandler.CreateNewPost)
 	apiV0.POST("/posts/:id/likes", likeHandler.CreateLike)

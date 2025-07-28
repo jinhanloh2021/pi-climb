@@ -106,3 +106,24 @@ func (h *FollowHandler) GetFollowing(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, following)
 }
+
+// Get if loggged in user following/follows_you? to target_user
+func (h *FollowHandler) GetFollowRelationship(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+	var targetUserID uuid.UUID = userID
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := uuid.Parse(paramID); err == nil {
+			targetUserID = parsedID
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uuid"})
+			return
+		}
+	}
+	userToTarget, targetToUser, err := h.followService.GetFollowRelationship(c, userID, targetUserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to get relationship with user %s", targetUserID.String())})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"following": userToTarget != nil, "follows_you": targetToUser != nil})
+	return
+}

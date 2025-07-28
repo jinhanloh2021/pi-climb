@@ -15,6 +15,7 @@ type FollowRepository interface {
 	DeleteFollow(c context.Context, fromUserID uuid.UUID, toUserID uuid.UUID) error
 	GetFollowers(c context.Context, userID uuid.UUID, targetUserID uuid.UUID) ([]models.Follow, error)
 	GetFollowing(c context.Context, userID uuid.UUID, targetUserID uuid.UUID) ([]models.Follow, error)
+	GetFollowEdge(c context.Context, userID uuid.UUID, fromUserID uuid.UUID, toUserID uuid.UUID) (*models.Follow, error)
 }
 
 type followRepository struct {
@@ -103,4 +104,22 @@ func (r *followRepository) GetFollowing(c context.Context, userID uuid.UUID, tar
 		return nil, err
 	}
 	return following, nil
+}
+
+// Get follow edge from_user -> to_user if exists
+func (r *followRepository) GetFollowEdge(c context.Context, userID uuid.UUID, fromUserID uuid.UUID, toUserID uuid.UUID) (*models.Follow, error) {
+	var follow models.Follow
+	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		if err := tx.Where("from_user_id = ? and to_user_id = ?", fromUserID, toUserID).First(&follow).Error; err != nil {
+			if errors.Is(gorm.ErrRecordNotFound, err) {
+				return gorm.ErrRecordNotFound
+			}
+			return fmt.Errorf("failed to find follow with edge %s -> %s", fromUserID, toUserID)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &follow, nil
 }
