@@ -1,0 +1,68 @@
+package handler
+
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/jinhanloh2021/beta-blocker/internal/dto"
+	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
+	"github.com/jinhanloh2021/beta-blocker/internal/service"
+)
+
+type CommentHandler struct {
+	commentService service.CommentService
+}
+
+func NewCommentHandler(s service.CommentService) *CommentHandler {
+	return &CommentHandler{commentService: s}
+}
+
+func (h *CommentHandler) CreateComment(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+
+	var postID uint
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := strconv.ParseUint(paramID, 10, 32); err == nil {
+			postID = uint(parsedID)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uint"})
+			return
+		}
+	}
+
+	var body dto.CreateCommentRequest
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body: " + err.Error()})
+		return
+	}
+
+	comment, err := h.commentService.CreateComment(c, postID, &body, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create comment"})
+		return
+	}
+	c.JSON(http.StatusCreated, comment)
+	return
+}
+
+func (h *CommentHandler) DeleteComment(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+
+	var commentID uint
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := strconv.ParseUint(paramID, 10, 32); err == nil {
+			commentID = uint(parsedID)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uint"})
+			return
+		}
+	}
+	err := h.commentService.DeleteComment(c, commentID, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to delete comment %d", commentID)})
+		return
+	}
+	c.Status(http.StatusNoContent)
+}

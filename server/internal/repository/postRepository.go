@@ -11,6 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// todo: Delete and update post
 type PostRepository interface {
 	CreateNewPost(c context.Context, userID uuid.UUID, body *dto.CreatePostRequest) (*models.Post, error)
 	GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error)

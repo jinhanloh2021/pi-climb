@@ -28,18 +28,21 @@ func main() {
 	postRepo := repository.NewPostRepository(database.DB)
 	followRepo := repository.NewFollowRepository(database.DB)
 	likeRepo := repository.NewLikeRepository(database.DB)
+	commentRepo := repository.NewCommentRepository(database.DB)
 
 	userService := service.NewUserService(userRepo)
 	postService := service.NewPostService(postRepo)
 	feedService := service.NewFeedService(postRepo)
 	followService := service.NewFollowService(followRepo)
 	likeService := service.NewLikeService(likeRepo)
+	commentService := service.NewCommentService(commentRepo)
 
 	userHandler := handler.NewUserHandler(userService)
 	postHandler := handler.NewPostHandler(postService)
 	feedHandler := handler.NewFeedHandler(feedService)
 	followHandler := handler.NewFollowHandler(followService)
 	likeHandler := handler.NewLikeHandler(likeService)
+	commentHandler := handler.NewCommentHandler(commentService)
 
 	jwtValidator := auth.NewSupabaseJWTValidator()
 
@@ -60,6 +63,7 @@ func main() {
 	apiV0.DELETE("/posts/:id/likes", likeHandler.DeleteLike)
 	apiV0.GET("/posts/:id/likes", likeHandler.GetPostLikes)
 	apiV0.GET("/posts/:id/likes/me", likeHandler.GetMyPostLike)
+	apiV0.POST("/posts/:id/comments", commentHandler.CreateComment)
 
 	apiV0.GET("/feed", feedHandler.GetFeed)
 
@@ -67,6 +71,8 @@ func main() {
 	apiV0.DELETE("/follow", followHandler.DeleteFollow)
 	apiV0.GET("/followers/me", followHandler.GetFollowers)
 	apiV0.GET("/following/me", followHandler.GetFollowing)
+
+	apiV0.DELETE("/comments/:id", commentHandler.DeleteComment)
 
 	log.Fatal(r.Run(":8080"))
 }
