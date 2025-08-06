@@ -4,15 +4,11 @@ import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { User } from "@/lib/api/types";
 
 export class UserService {
-  static async getMyInfo(): Promise<User> {
+  static async getMe(): Promise<User> {
     return apiClient.get<User>(API_ENDPOINTS.USER_INFO);
   }
 
-  static async getProfile(userId: string): Promise<User> {
-    return apiClient.get<User>(API_ENDPOINTS.USER_PROFILE(userId));
-  }
-
-  static async updateProfile(data: Partial<User>): Promise<User> {
-    return apiClient.put<User>(API_ENDPOINTS.USER_INFO, data);
+  static async getProfile(username: string): Promise<User> {
+    return apiClient.get<User>(API_ENDPOINTS.USER_PROFILE(username));
   }
 }

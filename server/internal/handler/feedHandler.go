@@ -40,6 +40,6 @@ func (h *FeedHandler) GetFeed(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Error getting feed")})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"posts": feed, "nextCursor": nextCursor})
+	c.JSON(http.StatusOK, gin.H{"posts": feed, "next_cursor": nextCursor})
 	return
 }

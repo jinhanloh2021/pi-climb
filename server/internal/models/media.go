@@ -8,10 +8,7 @@ import (
 )
 
 type Media struct {
-	ID        uint           `gorm:"primarykey" json:"id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+	ID uint `gorm:"primarykey" json:"id"`
 
 	StorageKey string `gorm:"size:512;not null" json:"storage_key"` // e.g. user_id/filename.jpg
 	Bucket     string `gorm:"size:256;not null" json:"bucket"`
@@ -32,5 +29,9 @@ type Media struct {
 
 	// Ownership
 	UserID uuid.UUID `gorm:"type:uuid;not null;index" json:"user_id"`
-	User   User      `gorm:"foreignKey:UserID" json:"user"`
+	User   *User     `gorm:"foreignKey:UserID" json:"user"`
+
+	CreatedAt *time.Time     `json:"created_at"`
+	UpdatedAt *time.Time     `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
