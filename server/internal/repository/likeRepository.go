@@ -33,6 +33,7 @@ func (r *likeRepository) CreateLike(c context.Context, userID uuid.UUID, postID 
 		PostID: postID,
 	}
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
+		// todo: supress db error, not found is valid
 		err := tx.Unscoped().First(&like, "user_id = ? and post_id = ?", userID, postID).Error
 		if err == nil {
 			if like.DeletedAt.Valid {

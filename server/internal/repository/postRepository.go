@@ -101,7 +101,6 @@ func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, f
 		}
 		return nil
 	})
-
 	if err != nil {
 		return nil, "", err
 	}

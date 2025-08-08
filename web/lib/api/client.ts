@@ -27,9 +27,6 @@ class ApiClient {
       data: { session },
       error,
     } = await supabase.auth.getSession();
-    console.log(
-      `Access token: ${JSON.stringify(await supabase.auth.getUser(), null, 2)}`,
-    );
     if (error || !session?.access_token) {
       throw new ApiError("Authentication required", 401);
     }
