@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -23,6 +24,8 @@ func NewCommentRepository(db *gorm.DB) CommentRepository {
 	return &commentRepository{BaseRepository: NewBaseRepository(db)}
 }
 
+var ErrCommentNotFound = errors.New("comment not found or not accessible")
+
 func (r *commentRepository) CreateComment(c context.Context, postID uint, body *dto.CreateCommentRequest, userID uuid.UUID) (*models.Comment, error) {
 	comment := models.Comment{
 		Text:   *body.Text,
@@ -43,8 +46,12 @@ func (r *commentRepository) CreateComment(c context.Context, postID uint, body *
 
 func (r *commentRepository) DeleteComment(c context.Context, commentID uint, userID uuid.UUID) error {
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
-		if err := tx.Delete(&models.Comment{}, commentID).Error; err != nil {
+		res := tx.Delete(&models.Comment{}, commentID)
+		if res.Error != nil {
 			return fmt.Errorf("failed to delete comment %d", commentID)
+		}
+		if res.RowsAffected == 0 {
+			return ErrCommentNotFound
 		}
 		return nil
 	})

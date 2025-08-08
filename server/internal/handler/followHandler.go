@@ -59,6 +59,10 @@ func (h *FollowHandler) DeleteFollow(c *gin.Context) {
 		return
 	}
 	err = h.followService.DeleteFollow(c, fromUserID, toUserID)
+	if errors.Is(err, repository.ErrFollowNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Follow to %s not found or not accessible", body.UserID)})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Error following user %s", body.UserID)})
 		return

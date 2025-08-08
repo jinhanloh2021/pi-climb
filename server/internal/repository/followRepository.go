@@ -26,7 +26,10 @@ func NewFollowRepository(db *gorm.DB) FollowRepository {
 	return &followRepository{BaseRepository: NewBaseRepository(db)}
 }
 
-var ErrAlreadyFollowing = fmt.Errorf("user is already following the target")
+var (
+	ErrAlreadyFollowing = errors.New("user is already following the target")
+	ErrFollowNotFound   = errors.New("follow not found or not accessible")
+)
 
 func (r *followRepository) CreateFollow(c context.Context, fromUserID uuid.UUID, toUserID uuid.UUID) (*models.Follow, error) {
 	follow := models.Follow{
@@ -50,6 +53,7 @@ func (r *followRepository) CreateFollow(c context.Context, fromUserID uuid.UUID,
 		}
 
 		// create new row
+		// todo: check toUserID exists before creation. Graceful error handling 404
 		if err = tx.Create(&follow).Error; err != nil {
 			return fmt.Errorf("failed to create follow")
 		}
@@ -67,8 +71,12 @@ func (r *followRepository) DeleteFollow(c context.Context, fromUserID uuid.UUID,
 		ToUserID:   toUserID,
 	}
 	err := r.withRLSTransaction(c, fromUserID, func(tx *gorm.DB) error {
-		if err := tx.Delete(&follow).Error; err != nil {
-			return fmt.Errorf("failed to delete follow: %w", err)
+		res := tx.Delete(&follow)
+		if res.Error != nil {
+			return fmt.Errorf("failed to delete follow: %w", res.Error)
+		}
+		if res.RowsAffected == 0 {
+			return ErrFollowNotFound
 		}
 		return nil
 	})

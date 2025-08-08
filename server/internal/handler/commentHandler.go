@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -8,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinhanloh2021/beta-blocker/internal/dto"
 	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
+	"github.com/jinhanloh2021/beta-blocker/internal/repository"
 	"github.com/jinhanloh2021/beta-blocker/internal/service"
 )
 
@@ -60,6 +62,10 @@ func (h *CommentHandler) DeleteComment(c *gin.Context) {
 		}
 	}
 	err := h.commentService.DeleteComment(c, commentID, userID)
+	if errors.Is(err, repository.ErrCommentNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Comment %d not found or not accessible", commentID)})
+		return
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to delete comment %d", commentID)})
 		return

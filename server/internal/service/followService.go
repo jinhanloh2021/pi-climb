@@ -33,6 +33,7 @@ func (s *followService) CreateFollow(c context.Context, fromUserID uuid.UUID, to
 	}
 	return follow, nil
 }
+
 func (s *followService) DeleteFollow(c context.Context, fromUserID uuid.UUID, toUserID uuid.UUID) error {
 	err := s.followRepo.DeleteFollow(c, fromUserID, toUserID)
 	if err != nil {
