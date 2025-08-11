@@ -1,4 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
+"use client";
+
+import { createClient } from "@/lib/supabase/client";
 
 export class ApiError extends Error {
   constructor(
@@ -11,7 +13,7 @@ export class ApiError extends Error {
   }
 }
 
-class ApiClient {
+class ClientSideApiClient {
   private baseUrl: string;
 
   constructor(
@@ -22,7 +24,7 @@ class ApiClient {
   }
 
   private async getAuthToken(): Promise<string> {
-    const supabase = await createClient();
+    const supabase = createClient();
     const {
       data: { session },
       error,
@@ -87,4 +89,4 @@ class ApiClient {
   }
 }
 
-export const apiClient = new ApiClient();
+export const clientSideApiClient = new ClientSideApiClient();

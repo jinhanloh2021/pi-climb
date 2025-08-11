@@ -43,7 +43,7 @@ export interface User {
 }
 
 export interface Like {
-  user_id: number;
+  user_id: string;
   user?: User;
 
   post_id: number;

@@ -1,6 +1,6 @@
-import { apiClient } from "@/lib/api/client";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { FeedResponse } from "@/lib/api/types";
+import { serverSideApiClient } from "../api/serverSideApiClient";
 
 export class FeedService {
   static async getFeed(
@@ -8,7 +8,7 @@ export class FeedService {
     trendCursor?: string,
     limit?: number,
   ): Promise<FeedResponse> {
-    return apiClient.get<FeedResponse>(
+    return serverSideApiClient.get<FeedResponse>(
       API_ENDPOINTS.FEED(followCursor, trendCursor, limit),
     );
   }

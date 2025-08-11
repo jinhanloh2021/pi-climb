@@ -7,6 +7,9 @@ export const API_ENDPOINTS = {
   POSTS: "/api/v0/posts",
   POST_DETAIL: (id: string) => `/api/v0/posts/${id}`,
 
+  // Like endpoints
+  LIKE: (postID: string) => `/api/v0/posts/${postID}/likes`,
+
   // Feed endpoints
   FEED: (followCursor?: string, trendCursor?: string, limit?: number) =>
     `/api/v0/feed?following-cursor=${followCursor}&trending-cursor=${trendCursor}&limit=${limit}`,

@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinhanloh2021/beta-blocker/internal/auth"
 	"github.com/jinhanloh2021/beta-blocker/internal/config"
@@ -44,11 +46,18 @@ func main() {
 	likeHandler := handler.NewLikeHandler(likeService)
 	commentHandler := handler.NewCommentHandler(commentService)
 
-	jwtValidator := auth.NewSupabaseJWTValidator()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
 
 	apiV0 := r.Group("/api/v0")
+	jwtValidator := auth.NewSupabaseJWTValidator()
 	apiV0.Use(middleware.AuthMiddleware(jwtValidator)).Use(middleware.UserAuthContextMiddleware())
 
 	apiV0.GET("/myinfo", userHandler.GetMyUser)
