@@ -17,6 +17,10 @@ export interface FeedResponse {
   posts: Post[];
 }
 
+export interface MyLikedPostResponse {
+  liked: boolean;
+}
+
 export interface User {
   id: string;
   email: string;

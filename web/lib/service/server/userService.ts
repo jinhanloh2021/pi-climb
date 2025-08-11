@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { User } from "@/lib/api/types";
-import { serverSideApiClient } from "../api/serverSideApiClient";
+import { serverSideApiClient } from "@/lib/api/serverSideApiClient";
 
 export class UserService {
   static async getMe(): Promise<User> {

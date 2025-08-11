@@ -5,9 +5,10 @@ import LikeButton from "./like-button";
 
 type Props = {
   post: Post;
+  liked: boolean;
 };
 
-export default async function FeedPost({ post }: Props) {
+export default async function FeedPost({ post, liked }: Props) {
   if (!post.media || post.media.length === 0) {
     return <div>no media content</div>;
   }
@@ -26,7 +27,7 @@ export default async function FeedPost({ post }: Props) {
       <p>{post.user?.username ?? post.user_id}</p>
       <Image src={data?.signedUrl ?? ""} width={500} height={500} alt="" />
       <div className="flex flex-row justify-start gap-2 my-2">
-        <LikeButton postID={post.id.toString()} />
+        <LikeButton postID={post.id.toString()} initLiked={liked} />
         <button className="bg-white text-black">Reply</button>
       </div>
       <p>{post.like_count} Likes</p>

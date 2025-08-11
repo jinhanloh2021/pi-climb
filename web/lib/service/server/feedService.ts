@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
 import { FeedResponse } from "@/lib/api/types";
-import { serverSideApiClient } from "../api/serverSideApiClient";
+import { serverSideApiClient } from "@/lib/api/serverSideApiClient";
 
 export class FeedService {
   static async getFeed(
