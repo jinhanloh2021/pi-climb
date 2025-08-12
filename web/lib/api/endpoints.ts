@@ -10,6 +10,9 @@ export const API_ENDPOINTS = {
   // Like endpoints
   LIKE: (postID: string) => `/api/v0/posts/${postID}/likes`,
 
+  // Comment endpoints
+  POST_COMMMENT: (postID: string) => `/api/v0/posts/${postID}/comments`,
+
   MY_LIKED_POST: (postID: string) => `/api/v0/posts/${postID}/likes/me`,
 
   // Feed endpoints

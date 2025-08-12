@@ -76,6 +76,21 @@ export interface Gym {
   deleted_at?: string;
 }
 
+export interface Comment {
+  id: string;
+  text: string;
+
+  user_id: string;
+  user?: User;
+
+  post_id: number;
+  post?: Post;
+
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
 export interface Post {
   id: number;
   caption?: string;
