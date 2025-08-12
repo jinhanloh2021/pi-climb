@@ -21,6 +21,28 @@ func NewCommentHandler(s service.CommentService) *CommentHandler {
 	return &CommentHandler{commentService: s}
 }
 
+func (h *CommentHandler) GetComments(c *gin.Context) {
+	userID, _ := middleware.GetUserID(c)
+
+	var postID uint
+	if paramID := c.Param("id"); paramID != "" {
+		if parsedID, err := strconv.ParseUint(paramID, 10, 32); err == nil {
+			postID = uint(parsedID)
+		} else {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse param uint"})
+			return
+		}
+	}
+
+	comments, err := h.commentService.GetComments(c, postID, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("failed to get comments for post %d", postID)})
+		return
+	}
+	c.JSON(http.StatusOK, comments)
+	return
+}
+
 func (h *CommentHandler) CreateComment(c *gin.Context) {
 	userID, _ := middleware.GetUserID(c)
 

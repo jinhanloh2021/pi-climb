@@ -15,6 +15,7 @@ export default async function FeedPost({ post, liked }: Props) {
 
   const media: Media = post.media[0];
   const supabase = await createClient();
+  // todo: Server-side infinite scrolling
   const { data, error } = await supabase.storage
     .from(media.bucket)
     .createSignedUrl(`${media.storage_key}`, 300);

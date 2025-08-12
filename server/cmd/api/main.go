@@ -73,6 +73,7 @@ func main() {
 	apiV0.GET("/posts/:id/likes", likeHandler.GetPostLikes)
 	apiV0.GET("/posts/:id/likes/me", likeHandler.GetMyPostLike)
 	apiV0.POST("/posts/:id/comments", commentHandler.CreateComment)
+	apiV0.GET("/posts/:id/comments", commentHandler.GetComments)
 
 	apiV0.GET("/feed", feedHandler.GetFeed)
 

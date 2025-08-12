@@ -12,4 +12,10 @@ export class CommentService {
       body,
     );
   }
+
+  static async getComments(postID: string): Promise<Comment[]> {
+    return clientSideApiClient.get<Comment[]>(
+      API_ENDPOINTS.POST_COMMMENT(postID),
+    );
+  }
 }
