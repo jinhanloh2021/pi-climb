@@ -3,7 +3,8 @@ import { FeedService } from "@/lib/service/server/feedService";
 import { PostService } from "@/lib/service/server/postService";
 
 export default async function FeedPage() {
-  const posts = await FeedService.getFeed("", "", 10); // todo: Handle cursors
+  // TODO: Handle cursors
+  const posts = await FeedService.getFeed("", "", 10);
   return (
     <div className="flex flex-col gap-12">
       <h2 className="font-bold text-2xl mb-4">Feed</h2>

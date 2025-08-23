@@ -91,6 +91,29 @@ export interface Comment {
   deleted_at?: string;
 }
 
+export interface CreateMediaRequest {
+  storage_key: string;
+  bucket: string;
+
+  original_name: string;
+  file_size: number;
+
+  mime_type: string;
+  order?: number;
+
+  width?: number;
+  height?: number;
+  duration?: number;
+}
+
+export interface CreatePostRequest {
+  caption?: string;
+  hold_colour?: string;
+  grade?: string;
+  media: CreateMediaRequest[];
+  gym_id?: number;
+}
+
 export interface Post {
   id: number;
   caption?: string;

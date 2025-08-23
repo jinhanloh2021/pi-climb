@@ -54,7 +54,7 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 			HoldColour: body.HoldColour,
 			Grade:      body.Grade,
 			UserID:     userID,
-			GymID:      body.GymID,
+			GymID:      body.GymID, // TODO: Implement Gym
 			Media:      mediaRecords,
 		}
 		if err := tx.Create(&post).Error; err != nil {

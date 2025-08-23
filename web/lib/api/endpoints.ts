@@ -5,15 +5,17 @@ export const API_ENDPOINTS = {
 
   // Post endpoints
   POSTS: "/api/v0/posts",
-  POST_DETAIL: (id: string) => `/api/v0/posts/${id}`,
+  POST_DETAIL: (id: string) => `${API_ENDPOINTS.POSTS}/${id}`,
 
   // Like endpoints
-  LIKE: (postID: string) => `/api/v0/posts/${postID}/likes`,
+  LIKE: (postID: string) => `${API_ENDPOINTS.POSTS}/${postID}/likes`,
 
   // Comment endpoints
-  POST_COMMMENT: (postID: string) => `/api/v0/posts/${postID}/comments`,
+  POST_COMMMENT: (postID: string) =>
+    `${API_ENDPOINTS.POSTS}/${postID}/comments`,
 
-  MY_LIKED_POST: (postID: string) => `/api/v0/posts/${postID}/likes/me`,
+  MY_LIKED_POST: (postID: string) =>
+    `${API_ENDPOINTS.POSTS}/${postID}/likes/me`,
 
   // Feed endpoints
   FEED: (followCursor?: string, trendCursor?: string, limit?: number) =>

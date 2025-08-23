@@ -50,6 +50,11 @@ func SeedPosts() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Using image path, get mimeType, filesize, width, height
+	// Generate filename and upload to Supabase Storage with URL
+	// Get storage key
+	// Post to BE
+
 	fmt.Printf("Seeding %d posts...\n", len(posts))
 	for i, p := range posts {
 		userID, err := GetUserIDByEmail(db, p.UserID)
