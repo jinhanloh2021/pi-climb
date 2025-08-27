@@ -143,22 +143,42 @@ export interface Post {
 
 export interface Media {
   id: number;
-  storage_key: string;
-  bucket: string;
 
   original_name: string;
-  file_size: number;
 
   mime_type: string;
   order?: number;
-
-  width?: number;
-  height?: number;
-  duration?: number;
 
   owner_id: number;
   owner_type: string;
 
   user_id: number;
   user?: User;
+
+  media_version: MediaVersion[];
+
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}
+
+export interface MediaVersion {
+  id: number;
+
+  storage_key: string;
+  bucket: string;
+
+  file_size: number;
+  version_type: string;
+
+  width?: number;
+  height?: number;
+  duration?: number;
+
+  media_id: number;
+  media?: Media;
+
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
 }

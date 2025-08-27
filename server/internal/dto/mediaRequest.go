@@ -8,9 +8,9 @@ type CreateMediaDto struct {
 	FileSize     int64  `json:"file_size" binding:"required"`
 
 	MimeType string `json:"mime_type"`
-	Order    *int   `json:"order"`
+	Order    *uint  `json:"order"`
 
-	Width    *int `json:"width"`
-	Height   *int `json:"height"`
-	Duration *int `json:"duration"`
+	Width    *uint `json:"width"`
+	Height   *uint `json:"height"`
+	Duration *uint `json:"duration"`
 }

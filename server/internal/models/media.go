@@ -7,21 +7,14 @@ import (
 	"gorm.io/gorm"
 )
 
+// Root of media versions
 type Media struct {
 	ID uint `gorm:"primarykey" json:"id"`
 
-	StorageKey string `gorm:"size:512;not null" json:"storage_key"` // e.g. user_id/filename.jpg
-	Bucket     string `gorm:"size:256;not null" json:"bucket"`
-
 	OriginalName string `gorm:"size:512;not null" json:"original_name"`
-	FileSize     int64  `gorm:"not null" json:"file_size"`
 
 	MimeType string `gorm:"size:128" json:"mime_type"`
-	Order    *int   `gorm:"default:0" json:"order"`
-
-	Width    *int `gorm:"default:null" json:"width"`
-	Height   *int `gorm:"default:null" json:"height"`
-	Duration *int `gorm:"default:null" json:"duration"`
+	Order    *uint  `gorm:"default:0" json:"order"`
 
 	// Polymorphic Association
 	OwnerID   uint   `gorm:"not null;index:idx_owner" json:"owner_id"`
@@ -30,6 +23,8 @@ type Media struct {
 	// Ownership
 	UserID uuid.UUID `gorm:"type:uuid;not null;index" json:"user_id"`
 	User   *User     `gorm:"foreignKey:UserID" json:"user"`
+
+	MediaVersions []MediaVersion `gorm:"foreignKey:MediaID;references:ID;constraint:OnDelete:CASCADE,OnUpdate:CASCADE" json:"media_version,omitempty"`
 
 	CreatedAt *time.Time     `json:"created_at"`
 	UpdatedAt *time.Time     `json:"updated_at"`

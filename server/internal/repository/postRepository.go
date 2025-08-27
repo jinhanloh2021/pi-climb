@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// todo: Delete and update post
+// TODO: Delete and update post
 type PostRepository interface {
 	CreateNewPost(c context.Context, userID uuid.UUID, body *dto.CreatePostRequest) (*models.Post, error)
 	GetFollowingFeed(c context.Context, userID uuid.UUID, feedCursor *dto.FeedCursor, limit int) ([]models.Post, string, error)
@@ -32,20 +32,11 @@ func (r *postRepository) CreateNewPost(c context.Context, userID uuid.UUID, body
 		mediaRecords := make([]models.Media, len(body.Media))
 		for i, mediaDto := range body.Media {
 			mediaRecords[i] = models.Media{
-				StorageKey: mediaDto.StorageKey,
-				Bucket:     mediaDto.Bucket,
-
 				OriginalName: mediaDto.OriginalName,
-				FileSize:     mediaDto.FileSize,
-
-				MimeType: mediaDto.MimeType,
-				Order:    mediaDto.Order,
-
-				Width:    mediaDto.Width,
-				Height:   mediaDto.Height,
-				Duration: mediaDto.Duration,
-
-				UserID: userID,
+				MimeType:     mediaDto.MimeType,
+				Order:        mediaDto.Order,
+				UserID:       userID,
+				// TODO: Add original media version when post create
 			}
 		}
 
@@ -85,7 +76,7 @@ func (r *postRepository) GetFollowingFeed(c context.Context, userID uuid.UUID, f
 		if len(followingUserID) == 1 {
 			return nil
 		}
-		query := tx.Preload("User").Preload("Media").Where("user_id IN (?)", followingUserID)
+		query := tx.Preload("User").Preload("Media.MediaVersions").Where("user_id IN (?)", followingUserID)
 		cursorTimestampNano, cursorPostID := dto.ParsePostCursor(feedCursor.FollowingCursor)
 		if cursorTimestampNano != -1 && cursorPostID != -1 {
 			query = query.Where("(created_at < ?) OR (created_at = ? AND id < ?)",

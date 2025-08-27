@@ -65,6 +65,8 @@ func SeedPosts() {
 
 		var postMedia []models.Media
 		for j, m := range p.Media {
+			var mediaVersions []models.MediaVersion
+			var uintJ uint = uint(j)
 			path := "./scripts/data/img/" + m
 			mimeType, fileSize, width, height, err := extractImageMetadata(path)
 			if err != nil {
@@ -76,16 +78,21 @@ func SeedPosts() {
 				log.Printf("Skipping media: Failed to upload %s: %v", m, err)
 				continue
 			}
+			mediaVersions = append(mediaVersions, models.MediaVersion{
+				StorageKey:  storageKey,
+				Bucket:      bucket,
+				FileSize:    fileSize,
+				VersionType: "original",
+				Width:       &width,
+				Height:      &height,
+			})
+
 			postMedia = append(postMedia, models.Media{
-				StorageKey:   storageKey,
-				Bucket:       bucket,
-				OriginalName: m,
-				FileSize:     fileSize,
-				MimeType:     mimeType,
-				Order:        &j,
-				Width:        &width,
-				Height:       &height,
-				UserID:       userID,
+				OriginalName:  m,
+				MimeType:      mimeType,
+				Order:         &uintJ,
+				UserID:        userID,
+				MediaVersions: mediaVersions,
 			})
 		}
 		if len(p.Media) != len(postMedia) {
@@ -158,7 +165,7 @@ func uploadToSupabaseStorage(userID uuid.UUID, filePath, bucket, filename string
 }
 
 // for .jpg and .png
-func extractImageMetadata(filePath string) (mimeType string, fileSize int64, width, height int, err error) {
+func extractImageMetadata(filePath string) (mimeType string, fileSize uint64, width, height uint, err error) {
 	f, err := os.Open(filePath)
 	f.Seek(0, io.SeekStart)
 	if err != nil {
@@ -167,14 +174,14 @@ func extractImageMetadata(filePath string) (mimeType string, fileSize int64, wid
 	defer f.Close()
 
 	stat, _ := f.Stat()
-	fileSize = stat.Size()
+	fileSize = uint64(stat.Size())
 
 	img, format, err := image.DecodeConfig(f)
 	if err != nil {
 		return
 	}
-	width = img.Width
-	height = img.Height
+	width = uint(img.Width)
+	height = uint(img.Height)
 
 	mimeType = mime.TypeByExtension(filepath.Ext(filePath))
 	if mimeType == "" {
