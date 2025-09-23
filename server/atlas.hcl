@@ -39,3 +39,28 @@ env "local" {
   ]
 }
 
+env "dev" {
+  src = data.external_schema.gorm.url   
+  dev = "docker://postgres/17/dev"
+  migration {
+    dir = "file://migrations"
+  }
+  format {
+    migrate {
+      diff = "{{ sql . \"  \" }}"
+    }
+  }
+  exclude = [
+    "auth",
+    "storage",
+    "vault",
+    "graphql",
+    "graphql_public",
+    "extensions",
+    "realtime",
+    "_realtime",
+    "pgbouncer",
+    "supabase_functions"
+  ]
+}
+
