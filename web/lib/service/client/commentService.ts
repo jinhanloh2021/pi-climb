@@ -1,5 +1,5 @@
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
-import { Comment, Like } from "@/lib/api/types";
+import { Comment } from "@/lib/api/types";
 import { clientSideApiClient } from "@/lib/api/clientSideApiClient";
 
 export class CommentService {

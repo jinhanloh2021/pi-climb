@@ -16,7 +16,7 @@ type Inputs = {
 };
 
 export default function NewPost() {
-  const { register, handleSubmit, watch } = useForm<Inputs>();
+  const { register, handleSubmit } = useForm<Inputs>();
   const supabase = createClient();
   const onSubmit: SubmitHandler<Inputs> = async (formData) => {
     // TODO: Error handling, input validation
