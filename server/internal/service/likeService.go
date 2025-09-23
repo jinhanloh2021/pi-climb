@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jinhanloh2021/beta-blocker/internal/models"
-	"github.com/jinhanloh2021/beta-blocker/internal/repository"
+	"github.com/jinhanloh2021/pi-climb/internal/models"
+	"github.com/jinhanloh2021/pi-climb/internal/repository"
 )
 
 type LikeService interface {

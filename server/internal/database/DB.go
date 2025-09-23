@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jinhanloh2021/beta-blocker/internal/config"
+	"github.com/jinhanloh2021/pi-climb/internal/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

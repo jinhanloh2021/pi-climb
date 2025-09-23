@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinhanloh2021/beta-blocker/internal/auth"
+	"github.com/jinhanloh2021/pi-climb/internal/auth"
 )
 
 const (

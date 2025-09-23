@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinhanloh2021/beta-blocker/internal/dto"
-	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
-	"github.com/jinhanloh2021/beta-blocker/internal/service"
+	"github.com/jinhanloh2021/pi-climb/internal/dto"
+	"github.com/jinhanloh2021/pi-climb/internal/middleware"
+	"github.com/jinhanloh2021/pi-climb/internal/service"
 )
 
 type PostHandler struct {

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jinhanloh2021/beta-blocker/internal/models"
+	"github.com/jinhanloh2021/pi-climb/internal/models"
 )
 
 type FeedCursor struct {

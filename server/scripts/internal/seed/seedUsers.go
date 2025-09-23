@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jinhanloh2021/beta-blocker/scripts/internal/config"
+	"github.com/jinhanloh2021/pi-climb/scripts/internal/config"
 )
 
 type SignUpRequest struct {

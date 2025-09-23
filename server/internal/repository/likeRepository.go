@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/jinhanloh2021/beta-blocker/internal/models"
+	"github.com/jinhanloh2021/pi-climb/internal/models"
 	"gorm.io/gorm"
 )
 

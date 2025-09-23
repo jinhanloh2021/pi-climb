@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	"github.com/jinhanloh2021/beta-blocker/internal/config"
+	"github.com/jinhanloh2021/pi-climb/internal/config"
 )
 
 // CustomClaims defines the claims expected in Supabase JWTs

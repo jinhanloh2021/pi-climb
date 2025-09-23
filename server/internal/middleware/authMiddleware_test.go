@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"github.com/jinhanloh2021/beta-blocker/internal/auth"
+	"github.com/jinhanloh2021/pi-climb/internal/auth"
 )
 
 type MockJWTValidator struct {

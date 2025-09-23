@@ -12,8 +12,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jinhanloh2021/beta-blocker/internal/middleware"
-	"github.com/jinhanloh2021/beta-blocker/internal/models"
+	"github.com/jinhanloh2021/pi-climb/internal/middleware"
+	"github.com/jinhanloh2021/pi-climb/internal/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"

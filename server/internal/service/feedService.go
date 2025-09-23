@@ -5,9 +5,9 @@ import (
 	"slices"
 
 	"github.com/google/uuid"
-	"github.com/jinhanloh2021/beta-blocker/internal/dto"
-	"github.com/jinhanloh2021/beta-blocker/internal/models"
-	"github.com/jinhanloh2021/beta-blocker/internal/repository"
+	"github.com/jinhanloh2021/pi-climb/internal/dto"
+	"github.com/jinhanloh2021/pi-climb/internal/models"
+	"github.com/jinhanloh2021/pi-climb/internal/repository"
 )
 
 type FeedService interface {
