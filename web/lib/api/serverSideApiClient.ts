@@ -15,8 +15,7 @@ class ServerSideApiClient {
   private baseUrl: string;
 
   constructor(
-    baseUrl: string = process.env.NEXT_PUBLIC_API_URL ||
-      "http://localhost:8080",
+    baseUrl: string = process.env.INTERNAL_API_URL || "http://server:8080",
   ) {
     this.baseUrl = baseUrl;
   }
