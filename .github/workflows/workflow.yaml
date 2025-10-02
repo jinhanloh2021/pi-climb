@@ -80,18 +80,26 @@ jobs:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_IAM_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Render new ECS task definition
-        id: task-def
+      - name: Render Amazon ECS task definition go_server
+        id: render-task-def-go-server
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: go_server,nextjs_server
-          image: ${{ needs.build-and-publish.outputs.server_image }},${{ needs.build-and-publish.outputs.web_image }}
+          container-name: go_server
+          image: ${{ needs.build-and-publish.outputs.server_image }}
+
+      - name: Render Amazon ECS task definition nextjs_server
+        id: render-task-def-nextjs-server
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{steps.render-task-def-go-server.outputs.task-definition}}
+          container-name: nextjs_server
+          image: ${{ needs.build-and-publish.outputs.web_image }}
 
       - name: Deploy to Amazon ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.task-def-nextjs-server.outputs.task-definition }} # change task-def
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
