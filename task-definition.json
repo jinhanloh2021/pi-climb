@@ -1,0 +1,87 @@
+{
+  "family": "pi-climb_task",
+  "containerDefinitions": [
+    {
+      "cpu": 0,
+      "environment": [],
+      "essential": true,
+      "image": "842832773369.dkr.ecr.ap-southeast-1.amazonaws.com/pi-climb-dev-server:latest",
+      "mountPoints": [],
+      "name": "go_server",
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "name": "go_server-8080-tcp",
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "PI_CLIMB_DEV_JWT_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_JWT_SECRET"
+        },
+        {
+          "name": "PI_CLIMB_DEV_DATABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_DATABASE_URL"
+        },
+        {
+          "name": "SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET"
+        },
+        {
+          "name": "PI_CLIMB_DEV_SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID"
+        }
+      ],
+      "systemControls": [],
+      "volumesFrom": []
+    },
+    {
+      "cpu": 0,
+      "environment": [],
+      "essential": true,
+      "image": "842832773369.dkr.ecr.ap-southeast-1.amazonaws.com/pi-climb-dev-web:latest",
+      "mountPoints": [],
+      "name": "nextjs_server",
+      "portMappings": [
+        {
+          "appProtocol": "http",
+          "containerPort": 3000,
+          "hostPort": 3000,
+          "name": "nextjs_server-3000-tcp",
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_URL"
+        },
+        {
+          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY"
+        },
+        {
+          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_API_URL",
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_API_URL"
+        }
+      ],
+      "systemControls": [],
+      "volumesFrom": []
+    }
+  ],
+  "executionRoleArn": "arn:aws:iam::842832773369:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "enableFaultInjection": false
+}

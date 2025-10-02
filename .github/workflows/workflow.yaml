@@ -1,28 +1,31 @@
-name: Docker image build and publish
+name: Docker image build, publish, and deploy
 on:
   push:
     branches:
       - "release/**"
 
-jobs:
-  docker:
-    runs-on: ubuntu-latest
+env:
+  AWS_ACCOUNT_ID: "842832773369"
+  AWS_REGION: "ap-southeast-1"
+  GITHUB_IAM_ROLE: "pi-climb_github-actions"
+  IMAGE_TAG: ${{ github.sha }}
 
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
 
-    env:
-      AWS_ACCOUNT_ID: "842832773369"
-      AWS_REGION: "ap-southeast-1"
-      GITHUB_IAM_ROLE: "pi-climb_github-actions"
-      IMAGE_TAG: ${{ github.sha }}
+    outputs:
+      server_image: ${{ steps.build-server-image.outputs.image }}
+      web_image: ${{ steps.build-web-image.outputs.image }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials (using OIDC)
+      - name: Configure AWS Credentials for ECR Access
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_IAM_ROLE }}
@@ -31,29 +34,64 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registries: ${{ env.AWS_ACCOUNT_ID }}
-
-      - name: Set ECR Registry Hostname
-        shell: bash
-        run: echo "ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}" >> $GITHUB_ENV
 
       - name: Build, Tag, and Push 'server' image to ECR
-        shell: bash
+        id: build-server-image
         env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: pi-climb-dev-server
         run: |
           FULL_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker build ./server -f ./server/dockerfile -t "$FULL_IMAGE"
           docker push "$FULL_IMAGE"
-          echo "Server image pushed to $FULL_IMAGE"
+          echo "image=$FULL_IMAGE" >> $GITHUB_OUTPUT
 
       - name: Build, Tag, and Push 'web' image to ECR
-        shell: bash
+        id: build-web-image
         env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: pi-climb-dev-web
         run: |
           FULL_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker build ./web -f ./web/dockerfile -t "$FULL_IMAGE"
           docker push "$FULL_IMAGE"
-          echo "Web image pushed to $FULL_IMAGE"
+          echo "image=$FULL_IMAGE" >> $GITHUB_OUTPUT
+
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    needs: [build-and-publish]
+
+    env:
+      ECS_CLUSTER: "pi-climb-bzz9ub"
+      ECS_SERVICE: "pi-climb_service-dtvx78q8"
+      ECS_TASK_DEFINITION: "task-definition.json"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials for ECS Deployment
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Render new ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: go_server,nextjs_server
+          image: ${{ needs.build-and-publish.outputs.server_image }},${{ needs.build-and-publish.outputs.web_image }}
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
