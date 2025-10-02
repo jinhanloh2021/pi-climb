@@ -30,19 +30,19 @@
       "secrets": [
         {
           "name": "JWT_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:JWT_SECRET"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:JWT_SECRET::"
         },
         {
           "name": "DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:DATABASE_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:DATABASE_URL::"
         },
         {
           "name": "SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET::"
         },
         {
           "name": "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID::"
         }
       ],
       "systemControls": [],
@@ -77,15 +77,15 @@
       "secrets": [
         {
           "name": "NEXT_PUBLIC_SUPABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_SUPABASE_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_SUPABASE_URL::"
         },
         {
           "name": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_SUPABASE_ANON_KEY::"
         },
         {
           "name": "NEXT_PUBLIC_API_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_API_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_API_URL::"
         }
       ],
       "systemControls": [],
@@ -105,4 +105,3 @@
   },
   "enableFaultInjection": false
 }
-
