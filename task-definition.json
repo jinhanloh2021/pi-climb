@@ -20,19 +20,19 @@
       "secrets": [
         {
           "name": "PI_CLIMB_DEV_JWT_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_JWT_SECRET"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
           "name": "PI_CLIMB_DEV_DATABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_DATABASE_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
           "name": "SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
           "name": "PI_CLIMB_DEV_SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         }
       ],
       "systemControls": [],
@@ -57,15 +57,15 @@
       "secrets": [
         {
           "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
           "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
           "name": "PI_CLIMB_DEV_NEXT_PUBLIC_API_URL",
-          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:PI_CLIMB_DEV_NEXT_PUBLIC_API_URL"
+          "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         }
       ],
       "systemControls": [],
@@ -76,7 +76,9 @@
   "networkMode": "awsvpc",
   "volumes": [],
   "placementConstraints": [],
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "1024",
   "memory": "2048",
   "runtimePlatform": {
