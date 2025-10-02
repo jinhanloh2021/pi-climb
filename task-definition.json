@@ -6,6 +6,16 @@
       "environment": [],
       "essential": true,
       "image": "842832773369.dkr.ecr.ap-southeast-1.amazonaws.com/pi-climb-dev-server:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/pi-climb_task",
+          "awslogs-create-group": "true",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
       "mountPoints": [],
       "name": "go_server",
       "portMappings": [
@@ -19,11 +29,11 @@
       ],
       "secrets": [
         {
-          "name": "PI_CLIMB_DEV_JWT_SECRET",
+          "name": "JWT_SECRET",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
-          "name": "PI_CLIMB_DEV_DATABASE_URL",
+          "name": "DATABASE_URL",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
@@ -31,7 +41,7 @@
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
-          "name": "PI_CLIMB_DEV_SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID",
+          "name": "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         }
       ],
@@ -43,6 +53,16 @@
       "environment": [],
       "essential": true,
       "image": "842832773369.dkr.ecr.ap-southeast-1.amazonaws.com/pi-climb-dev-web:latest",
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/pi-climb_task",
+          "awslogs-create-group": "true",
+          "awslogs-region": "ap-southeast-1",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
       "mountPoints": [],
       "name": "nextjs_server",
       "portMappings": [
@@ -56,15 +76,15 @@
       ],
       "secrets": [
         {
-          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_URL",
+          "name": "NEXT_PUBLIC_SUPABASE_URL",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
-          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_SUPABASE_ANON_KEY",
+          "name": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         },
         {
-          "name": "PI_CLIMB_DEV_NEXT_PUBLIC_API_URL",
+          "name": "NEXT_PUBLIC_API_URL",
           "valueFrom": "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ"
         }
       ],
