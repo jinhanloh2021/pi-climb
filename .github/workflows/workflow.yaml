@@ -9,6 +9,8 @@ env:
   AWS_REGION: "ap-southeast-1"
   GITHUB_IAM_ROLE: "pi-climb_github-actions"
   IMAGE_TAG: ${{ github.sha }}
+  NEXT_PUBLIC_SUPABASE_URL: "https://npsyopeyikopzzaqcqnr.supabase.co" # not secret
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wc3lvcGV5aWtvcHp6YXFjcW5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2ODgwOTUsImV4cCI6MjA3NDI2NDA5NX0.9jKrwony-sdBp6t5KP2W1qF8RxdeEimWR24BXV46Ikw"
 
 jobs:
   build-and-publish:
@@ -53,7 +55,12 @@ jobs:
           ECR_REPOSITORY: pi-climb-dev-web
         run: |
           FULL_IMAGE="$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker build ./web -f ./web/dockerfile -t "$FULL_IMAGE"
+          docker build ./web \
+          -f ./web/dockerfile \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
+          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY \
+          -t "$FULL_IMAGE"
+
           docker push "$FULL_IMAGE"
           echo "image=$FULL_IMAGE" >> $GITHUB_OUTPUT
 
