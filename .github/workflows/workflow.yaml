@@ -2,7 +2,7 @@ name: Docker image build, publish, and deploy
 on:
   push:
     branches:
-      - "release/**"
+      - "release"
 
 env:
   AWS_ACCOUNT_ID: "842832773369"
