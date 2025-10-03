@@ -1,99 +1,58 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
-<!-- PROJECT LOGO -->
 <br />
 <div align="center">
-
-<h3 align="center">Pi Climb</h3>
-
+<h3 align="center"><a href="https://dev.piclimb.com">Pi Climb</a></h3>
   <p align="center">
-    A social media app for climbers. Share your climbs and discover beta, connect with people in your gym!
+    A social media app for climbers. Share, discover, connect.
     <br />
   </p>
 </div>
 
-
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-  </ol>
-</details>
-
-
-
-<!-- ABOUT THE PROJECT -->
 ## About The Project
 
-A social media application for climbers. The backend REST API is built with Go, gin-gonic and Supabase postgres. All requests are authenticated and RLS applies to relevant tables to prevent unauthorised access. Currently monolithic architecture across all tables.
+A social media application for climbers. The backend REST API is built with Go, gin-gonic and Supabase postgres. All requests are authenticated and RLS applies to relevant tables to prevent unauthorised access. Monolithic architecture.
 
-The feed is done made algorithmically, recommending posts based on friends and on similar gym and difficulty.
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
+The post feed is done algorithmically, recommending posts based on friends and on similar gym and difficulty.
 
 ### Built With
+
 - Go
 - gin-gonic
 - Next.js
 - Supabase
 - Postgres
+- Flutter
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
+<!-- ## Getting Started
 
 ### Prerequisites
 
-### Installation
+### Installation -->
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Infrastructure
 
-## Usage
+![Pi Climb architecture diagram](/assets/pi-climb-architecture-diagram.png)
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Pi Climb is deployed on AWS Elastic Container Service, in a single cluster, service and task. It can be scaled by increasing the number of tasks should utilisation increase.
+
+Route 53 resolves name to ALB IP address. ALB routes traffic to appropriate container based on path rules `/api/*` to BE else FE. Traffic from 80/http is redirected to 443/https.
+
+ECS service is on private-subnet with security group that only allows inbound traffic from ALB, which protects it from external excess. As Go BE requires Supabase connection, outbound traffic from the private-subnet is routed to the NAT gateway in the public-subnet, which has internet gateway access and allows access to external resources, while protecting internal services.
+
+## CI/CD
+
+On push to release branch, the build-and-publish job is triggered. Web and server are built with [dockerfile](/server/dockerfile) and pushed to Elastic Container Registry.
+
+Deployment in next job uses ECS task definition to deploy containers with correct configurations.
+
+View full [workflow.yaml](/.github/workflows/workflow.yaml) and ECS [task-definition.json](/task-definition.json).
+
 
 ## Roadmap
 
 - [ ] MVP
 - [ ] Mobile Application
+- [ ] Machine learning based feed
+- [ ] Ads
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
