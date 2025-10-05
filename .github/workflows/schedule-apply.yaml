@@ -1,0 +1,41 @@
+name: Scheduled Terraform Apply
+
+on:
+  schedule:
+    # Runs at 01:00 UTC (9:00 AM SGT) on Monday through Friday
+    - cron: "0 1 * * 1-5"
+
+env:
+  AWS_ACCOUNT_ID: "842832773369"
+  AWS_REGION: "ap-southeast-1"
+  GITHUB_IAM_ROLE: "pi-climb_github-actions"
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    defaults:
+      run:
+        working-directory: ./infra/generated/aws
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials for Terraform
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_IAM_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
