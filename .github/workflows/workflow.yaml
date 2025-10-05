@@ -63,50 +63,41 @@ jobs:
 
           docker push "$FULL_IMAGE"
           echo "image=$FULL_IMAGE" >> $GITHUB_OUTPUT
+      - name: Update SSM Parameter with new image URIs
+        run: |
+          aws ssm put-parameter --name "/pi-climb/dev/server-image-uri" --value "${{ steps.build-server-image.outputs.image }}" --type "String" --overwrite
+          aws ssm put-parameter --name "/pi-climb/dev/web-image-uri" --value "${{ steps.build-web-image.outputs.image }}" --type "String" --overwrite
 
-  deploy:
+  terraform-apply:
     runs-on: ubuntu-latest
+    needs: [build-and-publish]
+    environment:
+      name: dev
+      url: https://www.dev.piclimb.com
+
     permissions:
       id-token: write
       contents: read
 
-    needs: [build-and-publish]
-
-    env:
-      ECS_CLUSTER: "pi-climb-bzz9ub"
-      ECS_SERVICE: "pi-climb_service-dtvx78q8"
-      ECS_TASK_DEFINITION: "task-definition.json"
+    defaults:
+      run:
+        working-directory: ./infra/generated/aws
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS Credentials for ECS Deployment
+      - name: Configure AWS Credentials for Terraform
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.GITHUB_IAM_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Render Amazon ECS task definition go_server
-        id: render-task-def-go-server
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
-          container-name: go_server
-          image: ${{ needs.build-and-publish.outputs.server_image }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
 
-      - name: Render Amazon ECS task definition nextjs_server
-        id: render-task-def-nextjs-server
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{steps.render-task-def-go-server.outputs.task-definition}}
-          container-name: nextjs_server
-          image: ${{ needs.build-and-publish.outputs.web_image }}
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Deploy to Amazon ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.render-task-def-nextjs-server.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+      - name: Terraform Apply
+        run: terraform apply -auto-approve

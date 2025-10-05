@@ -1,0 +1,23 @@
+# Terraform state files and backups
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.d/
+
+# Terraform CLI configuration files
+.terraformrc
+terraform.rc
+
+# Terraform variable files (potentially containing sensitive data)
+*.tfvars
+*.tfvars.json
+
+# Terraform crash logs
+crash.log
+
+# Local Terraform modules and provider binaries
+.terraform/
+
+# Terraform lock file (unless explicitly managed)
+# .terraform.lock.hcl # Consider committing this for consistent provider versions
+
+*.pike/
