@@ -19,12 +19,7 @@ resource "aws_lb_listener" "tfer--arn-003A-aws-003A-elasticloadbalancing-003A-ap
     type             = "forward"
   }
 
-  load_balancer_arn = "${data.terraform_remote_state.alb.outputs.aws_lb_tfer--pi-climb-alb_id}"
-
-  mutual_authentication {
-    ignore_client_certificate_expiry = "false"
-    mode                             = "off"
-  }
+  load_balancer_arn = aws_lb.tfer--pi-climb-alb.id
 
   port                                 = "443"
   protocol                             = "HTTPS"
@@ -49,7 +44,7 @@ resource "aws_lb_listener" "tfer--arn-003A-aws-003A-elasticloadbalancing-003A-ap
     type = "redirect"
   }
 
-  load_balancer_arn                    = "${data.terraform_remote_state.alb.outputs.aws_lb_tfer--pi-climb-alb_id}"
+  load_balancer_arn                    = aws_lb.tfer--pi-climb-alb.id
   port                                 = "80"
   protocol                             = "HTTP"
   region                               = "ap-southeast-1"

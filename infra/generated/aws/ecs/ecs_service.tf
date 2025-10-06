@@ -46,7 +46,7 @@ resource "aws_ecs_service" "tfer--pi-climb-bzz9ub_pi-climb_service-dtvx78q8" {
 
   network_configuration {
     assign_public_ip = "false"
-    security_groups  = ["${data.terraform_remote_state.sg.outputs.aws_security_group_tfer--pi-climb-service-sg_sg-0802e5a19b6cc4611_id}"]
+    security_groups  = ["${var.pi-climb-service_security_group_id}"]
     subnets          = ["subnet-04b6d206e946cb507"]
   }
 
