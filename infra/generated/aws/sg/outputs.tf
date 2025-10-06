@@ -1,11 +1,3 @@
-output "aws_security_group_tfer--default_sg-038e78107566ef6e2_id" {
-  value = aws_security_group.tfer--default_sg-038e78107566ef6e2.id
-}
-
-output "aws_security_group_tfer--default_sg-06785d05b75b329ef_id" {
-  value = aws_security_group.tfer--default_sg-06785d05b75b329ef.id
-}
-
 output "aws_security_group_tfer--pi-climb-endpoint-sg_sg-01e41717258f067bc_id" {
   description = "Security Group ID of pi-climb endpoint, used for internal AWS api calls"
   value       = aws_security_group.tfer--pi-climb-endpoint-sg_sg-01e41717258f067bc.id

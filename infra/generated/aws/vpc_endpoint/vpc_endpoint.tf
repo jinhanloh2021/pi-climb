@@ -96,7 +96,7 @@ resource "aws_vpc_endpoint" "tfer--vpce-0cd97c188366db4d4" {
   policy              = "{\"Statement\":[{\"Action\":\"*\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":\"*\"}]}"
   private_dns_enabled = "true"
   region              = "ap-southeast-1"
-  security_group_ids  = ["sg-01e41717258f067bc"]
+  security_group_ids  = [var.pi-climb_endpoint_sg]
   service_name        = "com.amazonaws.ap-southeast-1.secretsmanager"
   service_region      = "ap-southeast-1"
 
@@ -129,7 +129,7 @@ resource "aws_vpc_endpoint" "tfer--vpce-0f76d4657a64f2530" {
   policy              = "{\"Statement\":[{\"Action\":\"*\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":\"*\"}]}"
   private_dns_enabled = "true"
   region              = "ap-southeast-1"
-  security_group_ids  = ["sg-01e41717258f067bc"]
+  security_group_ids  = [var.pi-climb_endpoint_sg]
   service_name        = "com.amazonaws.ap-southeast-1.ecr.api"
   service_region      = "ap-southeast-1"
 
