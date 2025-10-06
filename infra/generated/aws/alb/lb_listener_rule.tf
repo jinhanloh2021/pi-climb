@@ -7,14 +7,13 @@ resource "aws_lb_listener_rule" "tfer--arn-003A-aws-003A-elasticloadbalancing-00
       }
 
       target_group {
-        arn    = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-go-tg/0c97f04d14eb3e7f"
+        arn    = aws_lb_target_group.tfer--pi-climb-go-tg.arn
         weight = "1"
       }
     }
 
-    order            = "1"
-    target_group_arn = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-go-tg/0c97f04d14eb3e7f"
-    type             = "forward"
+    order = "1"
+    type  = "forward"
   }
 
   condition {

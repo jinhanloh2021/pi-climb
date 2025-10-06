@@ -1,5 +1,5 @@
 resource "aws_lb_listener" "tfer--arn-003A-aws-003A-elasticloadbalancing-003A-ap-southeast-1-003A-842832773369-003A-listener-002F-app-002F-pi-climb-alb-002F-e17fb6d75ef46fbc-002F-56457fe2a9b0fc67" {
-  certificate_arn = "arn:aws:acm:ap-southeast-1:842832773369:certificate/488ad81e-3c84-4ee0-9eb5-23681cb270eb"
+  certificate_arn = "arn:aws:acm:ap-southeast-1:842832773369:certificate/488ad81e-3c84-4ee0-9eb5-23681cb270eb" # hardcoded
 
   default_action {
     forward {
@@ -9,13 +9,13 @@ resource "aws_lb_listener" "tfer--arn-003A-aws-003A-elasticloadbalancing-003A-ap
       }
 
       target_group {
-        arn    = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-nextjs-tg/f3d117d78cd69bce"
+        arn    = aws_lb_target_group.tfer--pi-climb-nextjs-tg.arn
         weight = "1"
       }
     }
 
     order            = "1"
-    target_group_arn = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-nextjs-tg/f3d117d78cd69bce"
+    target_group_arn = aws_lb_target_group.tfer--pi-climb-nextjs-tg.arn
     type             = "forward"
   }
 
