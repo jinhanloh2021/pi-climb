@@ -18,12 +18,12 @@ output "aws_lb_target_group_attachment_tfer--arn-003A-aws-003A-elasticloadbalanc
   value = aws_lb_target_group_attachment.tfer--arn-003A-aws-003A-elasticloadbalancing-003A-ap-southeast-1-003A-842832773369-003A-targetgroup-002F-pi-climb-nextjs-tg-002F-f3d117d78cd69bce-10-002E-0-002E-0-002E-134.id
 }
 
-output "aws_lb_target_group_tfer--pi-climb-go-tg_id" {
-  value = aws_lb_target_group.tfer--pi-climb-go-tg.id
+output "aws_lb_target_group_tfer--pi-climb-go-tg_arn" {
+  value = aws_lb_target_group.tfer--pi-climb-go-tg.arn
 }
 
-output "aws_lb_target_group_tfer--pi-climb-nextjs-tg_id" {
-  value = aws_lb_target_group.tfer--pi-climb-nextjs-tg.id
+output "aws_lb_target_group_tfer--pi-climb-nextjs-tg_arn" {
+  value = aws_lb_target_group.tfer--pi-climb-nextjs-tg.arn
 }
 
 output "aws_lb_tfer--pi-climb-alb_id" {

@@ -7,7 +7,7 @@ resource "aws_ecs_service" "tfer--pi-climb-bzz9ub_pi-climb_service-dtvx78q8" {
     weight            = "1"
   }
 
-  cluster = "pi-climb-bzz9ub"
+  cluster = aws_ecs_cluster.tfer--pi-climb-bzz9ub.arn
 
   deployment_circuit_breaker {
     enable   = "true"
@@ -33,13 +33,13 @@ resource "aws_ecs_service" "tfer--pi-climb-bzz9ub_pi-climb_service-dtvx78q8" {
   load_balancer {
     container_name   = "go_server"
     container_port   = "8080"
-    target_group_arn = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-go-tg/0c97f04d14eb3e7f"
+    target_group_arn = var.aws_lb_target_group_tfer--pi-climb-go-tg_arn
   }
 
   load_balancer {
     container_name   = "nextjs_server"
     container_port   = "3000"
-    target_group_arn = "arn:aws:elasticloadbalancing:ap-southeast-1:842832773369:targetgroup/pi-climb-nextjs-tg/f3d117d78cd69bce"
+    target_group_arn = var.aws_lb_target_group_tfer--pi-climb-nextjs-tg_arn
   }
 
   name = "pi-climb_service-dtvx78q8"
@@ -47,11 +47,14 @@ resource "aws_ecs_service" "tfer--pi-climb-bzz9ub_pi-climb_service-dtvx78q8" {
   network_configuration {
     assign_public_ip = "false"
     security_groups  = ["${var.pi-climb-service_security_group_id}"]
-    subnets          = ["subnet-04b6d206e946cb507"]
+    subnets          = ["subnet-04b6d206e946cb507"] # subnet hardcoded
   }
 
-  platform_version    = "LATEST"
-  region              = "ap-southeast-1"
-  scheduling_strategy = "REPLICA"
-  task_definition     = "arn:aws:ecs:ap-southeast-1:842832773369:task-definition/pi-climb_task:16"
+  platform_version      = "LATEST"
+  region                = "ap-southeast-1"
+  scheduling_strategy   = "REPLICA"
+  wait_for_steady_state = false
+  task_definition       = "${aws_ecs_task_definition.tfer--task-definition-002F-pi-climb_task.id}:${aws_ecs_task_definition.tfer--task-definition-002F-pi-climb_task.revision}" # // pi-climb_task:16
+  tags                  = {}
+  tags_all              = {}
 }

@@ -2,6 +2,8 @@
 *.tfstate
 *.tfstate.*.backup
 *.tfstate.d/
+terraform.tfstate
+terraform.tfstate.backup
 
 # Terraform CLI configuration files
 .terraformrc
