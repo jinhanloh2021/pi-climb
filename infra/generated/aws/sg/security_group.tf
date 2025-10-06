@@ -59,7 +59,7 @@ resource "aws_security_group" "tfer--pi-climb-endpoint-sg_sg-01e41717258f067bc" 
     description     = "Allows traffic from private pi-climb-service to AWS endpoints"
     from_port       = "443"
     protocol        = "tcp"
-    security_groups = ["${data.terraform_remote_state.sg.outputs.aws_security_group_tfer--pi-climb-service-sg_sg-0802e5a19b6cc4611_id}"]
+    security_groups = ["${aws_security_group.tfer--pi-climb-service-sg_sg-0802e5a19b6cc4611.id}"]
     self            = "false"
     to_port         = "443"
   }
@@ -118,7 +118,7 @@ resource "aws_security_group" "tfer--pi-climb-service-sg_sg-0802e5a19b6cc4611" {
     description     = "Allow only from load balancer"
     from_port       = "3000"
     protocol        = "tcp"
-    security_groups = ["${data.terraform_remote_state.sg.outputs.aws_security_group_tfer--pi-climb-lb-sg_sg-02821e5f312595268_id}"]
+    security_groups = ["${aws_security_group.tfer--pi-climb-lb-sg_sg-02821e5f312595268.id}"]
     self            = "false"
     to_port         = "3000"
   }
