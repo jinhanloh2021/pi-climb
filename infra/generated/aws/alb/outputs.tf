@@ -29,3 +29,11 @@ output "aws_lb_target_group_tfer--pi-climb-nextjs-tg_arn" {
 output "aws_lb_tfer--pi-climb-alb_id" {
   value = aws_lb.tfer--pi-climb-alb.id
 }
+
+output "aws_lb_tfer--pi-climb-alb_dns_name" {
+  value = aws_lb.tfer--pi-climb-alb.dns_name
+}
+
+output "aws_lb_tfer--pi-climb-alb_zone_id" {
+  value = aws_lb.tfer--pi-climb-alb.zone_id
+}
