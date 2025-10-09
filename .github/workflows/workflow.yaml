@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Configure AWS Credentials for ECR Access
         uses: aws-actions/configure-aws-credentials@v4
@@ -81,7 +81,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./infra/generated/aws
+        working-directory: ./infra
 
     steps:
       - name: Checkout repository
