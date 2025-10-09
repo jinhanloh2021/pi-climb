@@ -19,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./infra/generated/aws
+        working-directory: ./infra
 
     steps:
       - name: Checkout repository
