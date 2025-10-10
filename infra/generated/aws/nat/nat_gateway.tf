@@ -13,3 +13,14 @@ resource "aws_nat_gateway" "tfer--nat-0c87118685dfc7982" {
     Name = "pi-climb-public-nat"
   }
 }
+
+data "aws_route_table" "rtb-09b4d703f76e15d12" {
+  route_table_id = "rtb-09b4d703f76e15d12"
+}
+
+resource "aws_route" "route" {
+  route_table_id         = data.aws_route_table.rtb-09b4d703f76e15d12.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.tfer--nat-0c87118685dfc7982.id
+  depends_on             = [aws_nat_gateway.tfer--nat-0c87118685dfc7982]
+}
