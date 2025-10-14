@@ -13,3 +13,17 @@ resource "aws_nat_gateway" "tfer--nat-0c87118685dfc7982" {
     Name = "pi-climb-public-nat"
   }
 }
+
+data "aws_route_table" "private" {
+  filter {
+    name   = "tag:Name"
+    values = ["pi-climb-rtb-private1-ap-southeast-1a"] # Assuming your route table has a name tag
+  }
+}
+
+resource "aws_route" "route" {
+  route_table_id         = data.aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.tfer--nat-0c87118685dfc7982.id
+  depends_on             = [aws_nat_gateway.tfer--nat-0c87118685dfc7982]
+}

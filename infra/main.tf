@@ -1,10 +1,6 @@
-// todo: Terraform import to generate state files. S3 storage
-// Use SSM to get image tag of latest image for terraform
-// Inline task-definition.json. Find online example on github, copy
 // export AWS_PROFILE="AdministratorAccess-842832773369"
 // terraformer import aws --resources=alb,ecs,eip,logs,nat,sg,vpc_endpoint --connect=true --regions=ap-southeast-1 --profile=AdministratorAccess-842832773369
-// store route53 state
-// possible stale pointer from private-subnet to NAT
+// possible stale pointer from private-subnet to NAT // Confirmed
 
 terraform {
   required_providers {
