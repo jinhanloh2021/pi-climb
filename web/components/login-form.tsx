@@ -14,17 +14,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useIsDev } from "@/hooks/useIsDev";
+import { DEV_EMAIL, DEV_PASSWORD } from "@/lib/constants";
+import { Badge } from "./ui/badge";
+import { ArrowLeftIcon, SkipBackIcon, StepBackIcon } from "lucide-react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(DEV_EMAIL);
+  const [password, setPassword] = useState(DEV_PASSWORD);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const isDev = useIsDev();
+  useEffect(() => {
+    if (isDev) {
+      setEmail(DEV_EMAIL);
+      setPassword(DEV_PASSWORD);
+    }
+  }, [isDev]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +62,20 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <Link href="/" replace>
+            <ArrowLeftIcon className="text-primary hover:text-primary/80" />
+          </Link>
+          <CardTitle className="text-2xl flex flex-row justify-left items-center gap-2">
+            {isDev && (
+              <Badge
+                variant={"secondary"}
+                className="bg-green-950 hover:bg-green-950"
+              >
+                Dev
+              </Badge>
+            )}{" "}
+            Login
+          </CardTitle>
           <CardDescription>
             Enter your email below to login to your account
           </CardDescription>
