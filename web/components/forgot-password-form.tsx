@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useState } from "react";
+import { ArrowLeftIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function ForgotPasswordForm({
   className,
@@ -23,6 +25,7 @@ export function ForgotPasswordForm({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,6 +65,10 @@ export function ForgotPasswordForm({
       ) : (
         <Card>
           <CardHeader>
+            <ArrowLeftIcon
+              onClick={router.back}
+              className="text-primary hover:text-primary/80"
+            />
             <CardTitle className="text-2xl">Reset Your Password</CardTitle>
             <CardDescription>
               Type in your email and we&apos;ll send you a link to reset your

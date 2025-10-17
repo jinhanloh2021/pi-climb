@@ -92,6 +92,7 @@ func (r *likeRepository) GetMyPostLike(c context.Context, userID uuid.UUID, post
 	var like models.Like
 	err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {
 		if err := tx.Select("user_id").Where("post_id = ? and user_id = ?", postID, userID).First(&like).Error; err != nil {
+			// TODO: Used to fill like button, shouldn't be error if user has not liked a post
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return gorm.ErrRecordNotFound
 			}
