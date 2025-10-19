@@ -18,7 +18,7 @@ import { useEffect, useState } from "react";
 import { useIsDev } from "@/hooks/useIsDev";
 import { DEV_EMAIL, DEV_PASSWORD } from "@/lib/constants";
 import { Badge } from "./ui/badge";
-import { ArrowLeftIcon, SkipBackIcon, StepBackIcon } from "lucide-react";
+import { ArrowLeftIcon } from "lucide-react";
 
 export function LoginForm({
   className,
