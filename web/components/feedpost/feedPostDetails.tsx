@@ -3,7 +3,7 @@
 import { Post } from "@/lib/api/types";
 import { useState } from "react";
 import { PostService } from "@/lib/service/client/postService";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { CommentService } from "@/lib/service/client/commentService";
 import { HeartIcon } from "lucide-react";

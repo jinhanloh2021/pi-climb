@@ -1,4 +1,4 @@
-import FeedPost from "@/components/feedPost";
+import FeedPost from "@/components/feedpost/feedPost";
 import { FeedService } from "@/lib/service/server/feedService";
 import { PostService } from "@/lib/service/server/postService";
 

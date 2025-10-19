@@ -26,6 +26,8 @@ env "local" {
     }
   }
   exclude = [
+    "atlas_schema_revisions",
+    "public.atlas_schema_revisions",
     "auth",
     "storage",
     "vault",
@@ -51,6 +53,8 @@ env "dev" {
     }
   }
   exclude = [
+    "atlas_schema_revisions",
+    "public.atlas_schema_revisions",
     "auth",
     "storage",
     "vault",

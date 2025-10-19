@@ -10,7 +10,7 @@ import (
 type User struct {
 	ID          uuid.UUID  `gorm:"type:uuid;primarykey" json:"id"`
 	Email       string     `gorm:"unique;not null" json:"email"`
-	Username    string     `gorm:"unique;size:64;not null" json:"username"`
+	Username    *string    `gorm:"unique;size:64" json:"username"`
 	Bio         *string    `gorm:"size:256" json:"bio"`
 	IsPublic    bool       `gorm:"default:true" json:"is_public"`
 	PhoneNumber *string    `gorm:"unique" json:"phone_number"`
