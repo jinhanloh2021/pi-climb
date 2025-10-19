@@ -1,3 +1,4 @@
+// TODO: Refactor into appropriate files and folders
 export interface ApiResponse<T> {
   data: T;
   message?: string;
@@ -24,7 +25,7 @@ export interface MyLikedPostResponse {
 export interface User {
   id: string;
   email: string;
-  username: string;
+  username?: string;
   bio: string;
   is_public: boolean;
   phone_number: string;
