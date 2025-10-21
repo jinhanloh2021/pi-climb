@@ -1,4 +1,4 @@
-import { ONBOARDING_STEPS } from "@/app/(onboarding)/onboarding/page";
+import { ONBOARDING_STEPS } from "@/lib/api/types";
 import { cn } from "@/lib/utils";
 import React, { Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
