@@ -2,6 +2,7 @@ export const API_ENDPOINTS = {
   // User endpoints
   USER_INFO: "/api/v0/myinfo",
   USER_PROFILE: (username: string) => `/api/v0/users/username/${username}`,
+  UPDATE_PROFILE: `/api/v0/users`,
 
   // Post endpoints
   POSTS: "/api/v0/posts",

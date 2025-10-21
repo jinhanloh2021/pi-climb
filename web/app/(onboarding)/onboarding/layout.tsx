@@ -1,16 +1,16 @@
 import { requireAuth } from "@/lib/auth/utils";
+import { redirect } from "next/navigation";
 
 export default async function OnboardingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await requireAuth();
+  const { publicUser } = await requireAuth();
+  if (publicUser.username) {
+    redirect("/feed");
+  }
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
-        {children}
-      </div>
-    </main>
+    <main className="min-h-screen flex flex-col items-center">{children}</main>
   );
 }

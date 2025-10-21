@@ -1,15 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public data?: any,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
+import { ApiError } from "./clientSideApiClient";
 
 class ServerSideApiClient {
   private baseUrl: string;
