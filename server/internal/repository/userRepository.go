@@ -79,7 +79,7 @@ func (r *userRepository) UpdateUser(c context.Context, userID uuid.UUID, body *d
 		updates["date_of_birth"] = *body.DateOfBirth
 	}
 
-	// no updates
+	// no updates, return unchanged user
 	if len(updates) == 0 {
 		var currentUser models.User
 		err := r.withRLSTransaction(c, userID, func(tx *gorm.DB) error {

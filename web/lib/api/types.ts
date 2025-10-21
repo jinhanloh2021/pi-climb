@@ -183,3 +183,10 @@ export interface MediaVersion {
   updated_at: string;
   deleted_at?: string;
 }
+
+export interface UpdateUserRequest {
+  username?: string;
+  bio?: string;
+  is_public?: boolean;
+  date_of_birth?: string;
+}
