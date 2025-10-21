@@ -1,14 +1,10 @@
 "use client";
 import { OnboardingFormUserDetails } from "@/components/onboarding-form-user-details";
 import { OnboardingFormUsername } from "@/components/onboarding-form-username";
+import { ONBOARDING_STEPS } from "@/lib/api/types";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
-
-export enum ONBOARDING_STEPS {
-  USERNAME,
-  USER_DETAILS,
-}
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(ONBOARDING_STEPS.USERNAME);
