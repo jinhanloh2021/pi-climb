@@ -70,7 +70,7 @@ resource "aws_ecs_task_definition" "tfer--task-definition-002F-pi-climb_task" {
       healthCheck = {
         "command" : [
           "CMD-SHELL",
-          "curl -f http://localhost:3000/api/health || exit 1"
+          "curl -f http://localhost:3000/health || exit 1"
         ],
         "interval" : 30,
         "timeout" : 5,
