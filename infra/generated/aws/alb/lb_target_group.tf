@@ -6,7 +6,7 @@ resource "aws_lb_target_group" "tfer--pi-climb-go-tg" {
     healthy_threshold   = "5"
     interval            = "30"
     matcher             = "200"
-    path                = "/health"
+    path                = "/api/health"
     port                = "traffic-port"
     protocol            = "HTTP"
     timeout             = "5"
