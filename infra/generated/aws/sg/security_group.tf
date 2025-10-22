@@ -69,12 +69,21 @@ resource "aws_security_group" "tfer--pi-climb-service-sg_sg-0802e5a19b6cc4611" {
   }
 
   ingress {
-    description     = "Allow only from load balancer"
+    description     = "Allow FE from load balancer"
     from_port       = "3000"
     protocol        = "tcp"
     security_groups = ["${aws_security_group.tfer--pi-climb-lb-sg_sg-02821e5f312595268.id}"]
     self            = "false"
     to_port         = "3000"
+  }
+
+  ingress {
+    description     = "Allow BE from load balancer"
+    from_port       = "8080"
+    protocol        = "tcp"
+    security_groups = ["${aws_security_group.tfer--pi-climb-lb-sg_sg-02821e5f312595268.id}"]
+    self            = "false"
+    to_port         = "8080"
   }
 
   name   = "pi-climb-service-sg"
