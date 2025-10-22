@@ -190,3 +190,8 @@ export interface UpdateUserRequest {
   is_public?: boolean;
   date_of_birth?: string;
 }
+
+export enum ONBOARDING_STEPS {
+  USERNAME,
+  USER_DETAILS,
+}

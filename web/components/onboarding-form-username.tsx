@@ -16,7 +16,7 @@ import { User } from "@supabase/supabase-js";
 import { UserService } from "@/lib/service/client/userService";
 import { ApiError } from "@/lib/api/clientSideApiClient";
 import { UpdateUserRequest } from "@/lib/api/types";
-import { ONBOARDING_STEPS } from "@/app/(onboarding)/onboarding/page";
+import { ONBOARDING_STEPS } from "@/lib/api/types";
 import { Label } from "./ui/label";
 
 type Inputs = {
