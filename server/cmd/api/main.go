@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 
@@ -23,7 +24,7 @@ func init() {
 
 func main() {
 	r := gin.Default()
-	r.SetTrustedProxies([]string{"http://localhost:3000"})
+	r.SetTrustedProxies(nil)
 
 	// Initialize Repositories and Services
 	userRepo := repository.NewUserRepository(database.DB)
@@ -47,14 +48,23 @@ func main() {
 	commentHandler := handler.NewCommentHandler(commentService)
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOriginFunc: func(origin string) bool {
+			if origin == "http://localhost:3000" {
+				return true
+			}
+			if origin == "https://piclimb.com" || strings.HasSuffix(origin, ".piclimb.com") {
+				return true
+			}
+
+			return false
+		},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
-	r.GET("/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
+	r.GET("/api/health", func(c *gin.Context) { c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"}) })
 
 	apiV0 := r.Group("/api/v0")
 	jwtValidator := auth.NewSupabaseJWTValidator()

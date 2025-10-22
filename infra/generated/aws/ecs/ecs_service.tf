@@ -28,7 +28,7 @@ resource "aws_ecs_service" "tfer--pi-climb-bzz9ub_pi-climb_service-dtvx78q8" {
   desired_count                      = "1"
   enable_ecs_managed_tags            = "true"
   enable_execute_command             = "false"
-  health_check_grace_period_seconds  = "0"
+  health_check_grace_period_seconds  = "60"
 
   load_balancer {
     container_name   = "go_server"

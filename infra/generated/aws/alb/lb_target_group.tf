@@ -3,10 +3,10 @@ resource "aws_lb_target_group" "tfer--pi-climb-go-tg" {
 
   health_check {
     enabled             = "true"
-    healthy_threshold   = "5"
-    interval            = "30"
+    healthy_threshold   = "2"
+    interval            = "60"
     matcher             = "200"
-    path                = "/health"
+    path                = "/api/health"
     port                = "traffic-port"
     protocol            = "HTTP"
     timeout             = "5"
@@ -51,10 +51,10 @@ resource "aws_lb_target_group" "tfer--pi-climb-nextjs-tg" {
 
   health_check {
     enabled             = "true"
-    healthy_threshold   = "5"
-    interval            = "30"
+    healthy_threshold   = "2"
+    interval            = "60"
     matcher             = "200"
-    path                = "/"
+    path                = "/health"
     port                = "traffic-port"
     protocol            = "HTTP"
     timeout             = "5"
