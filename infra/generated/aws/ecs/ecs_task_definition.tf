@@ -35,8 +35,8 @@ resource "aws_ecs_task_definition" "tfer--task-definition-002F-pi-climb_task" {
         ],
         "interval" : 30,
         "timeout" : 5,
-        "retries" : 3,
-        "startPeriod" : 30
+        "retries" : 4,
+        "startPeriod" : 90
       }
       secrets = [
         { name = "DATABASE_URL", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:DATABASE_URL::" },
@@ -74,8 +74,8 @@ resource "aws_ecs_task_definition" "tfer--task-definition-002F-pi-climb_task" {
         ],
         "interval" : 30,
         "timeout" : 5,
-        "retries" : 3,
-        "startPeriod" : 60
+        "retries" : 4,
+        "startPeriod" : 90
       }
       secrets = [
         { name = "NEXT_PUBLIC_API_URL", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_API_URL::" },
