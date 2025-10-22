@@ -28,6 +28,16 @@ resource "aws_ecs_task_definition" "tfer--task-definition-002F-pi-climb_task" {
           name          = "go_server-8080-tcp"
         }
       ]
+      healthCheck = {
+        "command" : [
+          "CMD-SHELL",
+          "curl -f http://localhost:8080/api/health || exit 1"
+        ],
+        "interval" : 30,
+        "timeout" : 5,
+        "retries" : 3,
+        "startPeriod" : 30
+      }
       secrets = [
         { name = "DATABASE_URL", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:DATABASE_URL::" },
         { name = "JWT_SECRET", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:JWT_SECRET::" },
@@ -57,6 +67,16 @@ resource "aws_ecs_task_definition" "tfer--task-definition-002F-pi-climb_task" {
           name          = "nextjs_server-3000-tcp"
         }
       ]
+      healthCheck = {
+        "command" : [
+          "CMD-SHELL",
+          "curl -f http://localhost:3000/api/health || exit 1"
+        ],
+        "interval" : 30,
+        "timeout" : 5,
+        "retries" : 3,
+        "startPeriod" : 60
+      }
       secrets = [
         { name = "NEXT_PUBLIC_API_URL", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_API_URL::" },
         { name = "NEXT_PUBLIC_SUPABASE_ANON_KEY", valueFrom = "arn:aws:secretsmanager:ap-southeast-1:842832773369:secret:pi-climb/dev-wXQQeQ:NEXT_PUBLIC_SUPABASE_ANON_KEY::" },
